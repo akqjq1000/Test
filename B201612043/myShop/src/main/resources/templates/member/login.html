@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlnx:th="http://www.thymeleaf.org" xmlns:xmlnx="http://www.w3.org/1999/xhtml">
+<head>
+    <th:block th:include="@{/main/index-header}"></th:block>
+</head>
+
+<body>
+	<th:block th:include="@{/main/index-nav}"></th:block>
+	<section id="form"><!--form-->
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-4 col-sm-offset-1">
+					<div class="login-form">
+						<h2>Login to your account</h2>
+						<h6 style="color:#ff0000" th:text="${#httpServletRequest.getAttribute('message')}"></h6>
+						<form action="/member/login" method="post">
+							<input type="email" name="email" placeholder="Email" required/>
+							<input type="password" name="password" placeholder="Password" required/>
+							<span>
+								<input type="checkbox" class="checkbox"> 
+								Keep me signed in
+							</span>
+							<button type="submit" class="btn btn-default">Login</button>
+						</form>
+					</div><!--/login form-->
+				</div>
+				<div class="col-sm-3"></div>
+			</div>
+		</div>
+	</section><!--/form-->
+	
+	
+	<th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+</html>

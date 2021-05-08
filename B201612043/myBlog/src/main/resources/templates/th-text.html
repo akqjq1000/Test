@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+thymeleaf
+<th:block th:each="num : ${#numbers.sequence(10,15)}">
+    <span th:text="${num}"></span>
+    <a th:text = "'induk comso'" href="http://cafe.naver.com/induksoft"></a>
+</th:block>
+</body>
+</html>
