@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .courier-view {
+            border: 2px solid #eee;
+            border-radius: 15px;
+        }
+        .courier-view:hover{
+            background: #eee;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+
+        function getParameter(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+        function selectCourier(no) {
+            let thisNo = getParameter("thisNo");
+
+            opener.document.getElementsByName('courierNo')[thisNo].value = document.getElementsByName('courierNo')[no].value;
+            opener.document.getElementsByClassName('courier-name')[thisNo].innerText = document.getElementsByName('courier-name')[no].innerText;
+            opener.document.getElementsByClassName('courier-phone')[thisNo].innerText = document.getElementsByName('courier-phone')[no].innerText;
+            opener.document.getElementsByClassName('courier')[thisNo].innerText = document.getElementsByName('courier')[no].innerText;
+            window.close();
+        }
+    </script>
+</head>
+<body>
+    <h2>배송기사 선택</h2>
+    <select>
+        <option></option>
+    </select>
+    <div>
+        <div th:each="courier, i: ${dataContainer.courierList}" class="courier-view" th:onclick="'selectCourier('+${i.index}+')'">
+            <input type="hidden" name="courierNo" th:value="${courier.id}">
+            <h4 name="courier-name" th:text="${courier.name}"></h4>
+            <h4 name="courier-phone" th:text="${courier.phone}"></h4>
+            <h4 name="courier" th:text="${courier.courier}"></h4>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.OrderMapper">
+    <select id="readList" resultType="com.idu.shop.domain.order.Order">
+        <![CDATA[select * from ordered]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.order.Order">
+        SELECT * FROM ordered WHERE orderSequence=#{orderSequence} AND orderCnt=#{orderCnt}
+    </select>
+    <select id="readBySerialNumber" resultType="com.idu.shop.domain.order.Order">
+        <![CDATA[SELECT * FROM ordered WHERE orderSequence=#{orderSequence}]]>
+    </select>
+    <insert id="insert">
+        INSERT INTO ordered VALUES(seq_order.nextval, #{orderCnt}, #{orderSequence}, #{memberNo}, #{productNo}, #{count}, SYSDATE)
+    </insert>
+    <update id="update">
+        update ordered set memberNo=#{memberNo}, productNo=#{productNo}, count=#{count} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from ordered where id = #{id}
+    </delete>
+
+</mapper>

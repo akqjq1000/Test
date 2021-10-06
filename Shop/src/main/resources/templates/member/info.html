@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>OnePage - Info View</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+  <script>
+    window.onload = function() {
+      let isLogin = '${loginEmail}';
+
+      if (isLogin == "") {
+        location.href="/";
+      }
+    }
+
+    function unregister(e) {
+      let pw = document.getElementsByName('password')[0].value;
+      if (pw == '') {
+        alert('비밀번호를 입력해주세요.');
+        e.preventDefault();
+      } else {
+        let yesno = confirm('회원탈퇴하시겠습니까?');
+        if (yesno) {
+          document.loginForm.action = '/members/unregister';
+          document.loginForm.submit();
+        } else {
+          e.preventDefault();
+        }
+      }
+    }
+    function addShippingAddress(id) {
+      document.getElementById('add'+id).style.display = "none";
+      document.getElementById('addShippingAddressForm'+id).style.display = "block";
+    }
+
+    function cancelAddShippingAddress(id) {
+      document.getElementById('add'+id).style.display = "inline-block";
+      document.getElementById('addShippingAddressForm'+id).style.display = "none";
+    }
+
+    function deleteShippingAddress(id) {
+      if(confirm('배송지를 삭제하시겠습니까?')==true) {
+        location.href="/members/delete-shipping-address?id="+id;
+      } else {
+      }
+    }
+
+    function setRepresentative(id, memberNo) {
+      location.href='/members/set-representative-shipping-address?id='+id;
+    }
+
+  </script>
+  <style>
+    .setBtn {
+      position: absolute;
+      left: -30px;
+      top: 5px;
+      cursor: pointer;
+      font-size: 10pt;
+    }
+    .representative {
+      border: 3px solid #417fb0;
+    }
+  </style>
+</head>
+
+<body>
+  <th:block th:include="@{/main/index-header}"></th:block>
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs" style="margin-top: 125px;">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Info</h2>
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li>Register</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+
+    <section id="portfolio-details" class="portfolio-details">
+      <div class="container" data-aos="fade-up">
+
+        <!-- ======= Member Info Section ======= -->
+        <div class="row">
+          <div class="col-sm-5">
+            <h4>배송지</h4>
+            <div th:if="${memberShippingAddressList.size() < 3}" th:id="'shippingAddressEmpty'+${msa}" class="shipping-address-empty" th:each="msa : ${#numbers.sequence(memberShippingAddressList.size() + 1, 3)}">
+              <h6 th:id="'add'+${msa}" th:onclick="'addShippingAddress('+${msa}+')'">+</h6>
+              <div th:id="'addShippingAddressForm'+${msa}" class="shipping-address-form" data-aos="fade-up">
+                <form action="/members/add-shipping-address" method="post">
+                  <input type="text" placeholder="수령인" name="name" required>
+                  <input type="text" placeholder="전화번호" name="phone" required>
+                  <input type="text" placeholder="주소" name="address" required>
+                  <input type="text" placeholder="배송 시 요청사항" name="comments">
+                  <input type="submit" value="배송지 추가">
+                  <input th:id="'cancelButton' + ${msa}" type="button" th:onclick="'cancelAddShippingAddress('+${msa}+')'" value="취소">
+                </form>
+              </div>
+            </div>
+            <!--  -->
+            <div th:if="${memberShippingAddressList.size() > 0}" th:id="'shippingAddressEmpty'+${sa.id}" class="shipping-address-empty" th:each="sa : ${memberShippingAddressList}">
+              <div id="updateShippingAddressForm"  th:class="${(sa.representative == 1) ? 'representative' : ''}" class="shipping-address-form-update" data-aos="fade-up">
+                <h5 th:if="${sa.representative != 1}" th:onclick="'setRepresentative('+${sa.id}+')'" class="setBtn">설정</h5>
+                <form name="updateForm" action="/members/update-shipping-address" method="post">
+                  <input type="hidden" name="id" th:value="${sa.id}">
+                  <input type="text" placeholder="수령인" name="name" th:value="${sa.name}" required>
+                  <input type="text" placeholder="전화번호" name="phone" th:value="${sa.phone}" required>
+                  <input type="text" placeholder="주소" name="address" th:value="${sa.address}" required>
+                  <input type="text" placeholder="배송 시 요청사항" name="comments" th:value="${sa.comments}">
+                  <input type="submit" onclick="" value="배송지 수정">
+                  <input type="button" th:onclick="'deleteShippingAddress(' + ${sa.id} + ')'" value="제거">
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- End Member Info Section -->
+
+          <!-- ======= Member Info Section ======= -->
+          <div class="col-sm-5">
+            <h4>회원 정보</h4>
+            <h6 style="font-size: 10pt; color: #417fb0">※ 비밀번호 변경을 원하시면 새로운 비밀번호를 입력해주세요.</h6>
+            <form name="loginForm" class="loginForm" action="/members/update" method="post">
+              <input type="email" name="email" placeholder="Email" required th:value="${member.email}" disabled>
+              <input type="password" name="password" placeholder="Password">
+              <input type="password" name="confirmPassword" placeholder="Confirm Password">
+              <input type="text" name="name" placeholder="Name" th:value="${member.name}">
+              <input type="text" name="phone" placeholder="Phone" th:value="${member.phone}">
+              <input type="text" name="address" placeholder="Address" th:value="${member.address}">
+              <button type="submit">Update</button>
+              <button onclick="unregister(event)">Unregister</button>
+            </form>
+          </div>
+          <!-- End Member Info Section -->
+        </div>
+
+        <div class="row">
+          <div class="col-sm-5">
+            <h4>포인트</h4>
+            <span th:text="${member.point}"></span>
+          </div>
+          <div class="col-sm-5">
+            <h4>쿠폰</h4>
+            <th:block th:each="coupon : ${couponList}">
+              <span th:text="${coupon.name}"></span>
+              <span th:text="${coupon.price}"></span>
+              <span th:text="${coupon.percent}"></span>
+            </th:block>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main><!-- End #main -->
+  <th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

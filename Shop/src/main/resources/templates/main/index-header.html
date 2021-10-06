@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top" xmlns:th="http://www.w3.org/1999/html">
+    <div class="row top-bar-container">
+        <div class="top-bar">
+        <ul>
+            <th:block th:if="${session.loginEmail == null}">
+                <li><a href="/members/loginView">로그인</a></li>
+                <li><a href="/members/registerView">회원가입</a></li>
+            </th:block>
+            <th:block th:if="${session.loginEmail != null}">
+                <li><a href="/members/info"><span th:text="${session.loginPoint}"></span><i class="point-icon">P</i></a></li>
+                <li><a href="/members/info" th:text="${session.loginEmail}"></a></li>
+                <li><a href="/members/logout">로그아웃</a></li>
+            </th:block>
+        </ul>
+        </div>
+    </div>
+    <div class="container align-items-center">
+        <div class="row">
+
+            <h1 class="logo"><a href="/">OnePage</a></h1>
+            <div class="col-sm-1"></div>
+            <div>
+                <div class="nav-menu search-box">
+                    <form action="/products/product-list" method="get">
+                        <input type="hidden" name="menu" value="search">
+                        <select name="selectCate">
+                            <option value="-1">전체</option>
+                            <option th:each="cate : ${application.dataContainer.BCategoryList}" th:text="${cate.name}" th:value="${cate.id}"></option>
+                        </select>
+                        <input style="width: 425px;" name="keyword" th:value="${keyword}" type="text" placeholder="검색어를 입력하세요!">
+                        <button class="icofont-search search-button"></button>
+                    </form>
+                </div><!-- .nav-menu -->
+
+                <style>
+                    .category-section {
+                        position: absolute;
+                        list-style: none;
+                        width: 560px;
+                        padding-left: 0;
+                    }
+                    .category-section li {
+                        font-family: "Raleway", sans-serif;
+                        float: left;
+                        font-size: 10pt;
+                        width: 93px;
+                        text-align: center;
+                        margin-top: 6px;
+                        margin-bottom: 6px;
+                        padding-top: 3px;
+                        padding-bottom: 3px;
+                        cursor: pointer;
+                        border-bottom: 2px solid #417fb0;
+                    }
+                    .sub-category-section ul {
+                        z-index: 1;
+                        position: relative;
+                        list-style: none;
+                        padding-top: 10px;
+                        display: none;
+                        width: 93px;
+                        padding-left: 0;
+                    }
+                    .sub-category-section ul li {
+                        font-family: "Raleway", sans-serif;
+                        margin: 0;
+                        background: #fff;
+                        color: #417fb0;
+                        font-size: 10pt;
+                        text-align: center;
+                        padding: 5px 0px;
+                        cursor: pointer;
+                    }
+                    .sub-category-section ul li:hover {
+                        transition: 0.4s;
+                        background: #417fb0;
+                        color: #fff;
+                    }
+                    .choices {
+                        background: #417fb0;
+                        color: #fff;
+                    }
+                </style>
+
+                <script>
+                    function productListByCateNo(id) {
+                        document.getElementsByName('bCateNo')[0].value = id;
+                        document.categoryMenu.submit();
+                    }
+                </script>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <script>
+                    $(document).ready(function(){
+                        $(".category-item>a").mouseover(function(){
+                            if ($(this).next("div").children('ul').is(":visible") != true) {
+                                $(this).next("div").children('ul').slideDown();
+                                $(this).parent().addClass('choices');
+                            } else {
+                                $(this).next("div").children('ul').slideUp();
+                                $(this).parent().removeClass('choices');
+                            }
+                        });
+                    });
+                </script>
+
+                <form name="categoryMenu" action="/products/product-list" method="get">
+                    <input type="hidden" name="menu" value="category">
+                    <input type="hidden" name="bCateNo" value="">
+                    <ul class="category-section">
+                        <th:block th:each="bCate : ${application.dataContainer.BCategoryList}">
+                            <li class="category-item">
+                                <a th:text="${bCate.name}" th:onclick="'productListByCateNo('+${bCate.id}+')'"></a>
+                                <div class="sub-category-section">
+                                    <ul>
+                                        <li th:if="${bCate.id == mCate.bCateNo}"
+                                            th:each="mCate : ${application.dataContainer.MCategoryList}"
+                                            th:onclick="'location.href=\'/products/product-list?menu=sub-category&bCateNo='+${bCate.id}+'&mCateNo='+${mCate.id} + '\''"
+                                            th:text="${mCate.name}">
+
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </th:block>
+
+                    </ul>
+                </form>
+            </div>
+            <div class="col-sm-3">
+                <div class="main-member-info">
+                    <span>
+                        <i class="icofont-user"></i>
+                        <span>마이메뉴</span>
+                    </span>
+                </div>
+                <th:block th:if="${session.loginEmail == null}">
+                    <div class="main-cart" onclick="location.href='/members/loginView'">
+                        <span>
+                            <i class="icofont-cart"></i>
+                            <span>장바구니</span>
+                        </span>
+                    </div>
+                </th:block>
+                <th:block th:if="${session.loginEmail != null}">
+                    <div class="main-cart" onclick="location.href='/orders/shopping-cart'">
+                        <span>
+                            <i class="icofont-cart"></i>
+                            <span>장바구니</span>
+                            <span class="cart-stock" th:text="${session.shoppingCartListSize}"></span>
+                        </span>
+                    </div>
+                </th:block>
+                <div class="main-member-menu">
+                    <ul>
+                        <li><a href="/orders/orderList">주문목록</a></li>
+                        <li><a href="">취소/반품</a></li>
+                        <li><a href="/members/heart-list">찜 리스트</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

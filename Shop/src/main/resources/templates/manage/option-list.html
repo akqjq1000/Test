@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Title</title>
+  <style>
+    select {
+      width:200px;
+    }
+  </style>
+</head>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  let option_list = [[ ${optionList} ]];
+  let option_value_list = [[ ${optionValueList} ]];
+  /*]]*/
+
+  window.onload = function () {
+    var opt = document.getElementById('opt');
+    document.insertForm.style.display = 'none';
+    document.updateForm.style.display = 'none';
+
+    for (let i =0; i < option_list.length; i++) {
+      var option = document.createElement('option');
+      option.innerText = option_list[i].name;
+      option.value = option_list[i].id;
+      opt.append(option);
+    }
+  }
+
+  function select_cate_option(op) {
+    var selectedItem = op.id;
+
+    if (op.value != -1) {
+      document.insertForm.style.display = 'none';
+      document.updateForm.style.display = 'block';
+      if (selectedItem == 'opt') {
+        var opt_value = document.getElementById('opt_value');
+        document.getElementById('insertOptionNo').value = op.value;
+
+        for (let i = 0; i < opt_value.length; i++) {
+          if (opt_value.options[i].value == -1) continue;
+          opt_value.options[i] = null;
+        }
+        opt_value.options.length = 1;
+
+        for (let i = 0; i < option_value_list.length; i++) {
+          if (option_value_list[i].optionNo == op.value) {
+            var option = document.createElement('option');
+            option.innerText = option_value_list[i].name;
+            option.value = option_value_list[i].id;
+            opt_value.append(option);
+          }
+        }
+      }
+    } else {
+      var txt = document.getElementById('insertValue');
+      txt.value = "";
+      document.insertForm.style.display = 'block';
+      document.updateForm.style.display = 'none';
+      document.getElementById('insertOpt').value = selectedItem;
+      if (selectedItem == 'opt') {
+        txt.placeholder = '옵션 추가';
+      } else if (selectedItem == 'opt_value') {
+        txt.placeholder = '옵션 값 추가';
+      }
+    }
+  }
+
+  function delete_category(op) {
+    let selectedItem = op.id;
+    if (op.value != -1) {
+      if (selectedItem == 'opt') {
+        for (let i = 0; i < option_list.length; i++) {
+          if (option_list[i].id == op.value) {
+            let ret = confirm("'" + option_list[i].name + "' 옵션 삭제하시겠습니까?" +
+                    "\n(※ 하위 옵션도 모두 삭제됩니다.)");
+            if (ret) {
+              location.href="/manager/delete?menu=option&deleteOptionNo="+op.value+"&deleteOpt="+selectedItem;
+            }
+            return;
+          }
+        }
+      } else if (selectedItem == 'opt_value') {
+        for (let i = 0; i < option_value_list.length; i++) {
+          if (option_value_list[i].id == op.value) {
+            let ret = confirm("'" + option_value_list[i].name + "' 값을 삭제하시겠습니까?");
+            if (ret) {
+              location.href="/manager/delete?menu=option&deleteOptionNo="+op.value+"&deleteOpt="+selectedItem;
+            }
+            return;
+          }
+        }
+      }
+    }
+  }
+</script>
+<body>
+선택은 클릭<br>
+삭제는 더블클릭<br>
+추가는 최상단 클릭<br>
+<select size="10" id="opt" onclick="select_cate_option(this)" ondblclick="delete_category(this)">
+  <option value="-1">옵션 추가</option>
+</select>
+<select size="10" id="opt_value" onclick="select_cate_option(this)" ondblclick="delete_category(this)">
+  <option value="-1">옵션 값 추가</option>
+</select>
+<br>
+<form action="/manager/update" name="updateForm" method="post">
+  <input type="hidden" name="menu" value="option"/>
+  <input type="hidden" name="updateOpt" value="" id="updateOpt"/>
+  <input type="hidden" name="updateOptionNo" value="" required/>
+  <input type="text" id="updateValue" name="updateValue" placeholder="추가" required/>
+  <input type="submit"/>
+</form>
+<form action="/manager/create" name="insertForm" method="post">
+  <input type="hidden" name="menu" value="option"/>
+  <input type="hidden" name="insertOpt" value="" id="insertOpt"/>
+  <input type="hidden" name="insertOptionNo" id="insertOptionNo" value="" required/>
+  <input type="text" id="insertValue" name="insertValue" placeholder="추가" required/>
+  <input type="submit"/>
+</form>
+<input type="button" value="목록" onclick="location.href='/manager/'"/>
+</body>
+</html>

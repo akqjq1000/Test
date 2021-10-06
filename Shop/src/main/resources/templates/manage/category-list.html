@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <style>
+        select {
+            width:200px;
+        }
+    </style>
+</head>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let b_cate_list = [[ ${bCategoryList} ]];
+    let m_cate_list = [[ ${mCategoryList} ]];
+    let s_cate_list = [[ ${sCategoryList} ]];
+    /*]]*/
+
+    window.onload = function () {
+        var b_cate = document.getElementById('b_cate');
+        document.insertForm.style.display = 'none';
+        document.updateForm.style.display = 'none';
+        document.getElementById('m_cate').style.display = 'none';
+        document.getElementById('s_cate').style.display = 'none';
+
+        for (let i =0; i < b_cate_list.length; i++) {
+            var option = document.createElement('option');
+            option.innerText = b_cate_list[i].name;
+            option.value = b_cate_list[i].id;
+            b_cate.append(option);
+        }
+    }
+
+    function select_cate_option(op) {
+        var selectedItem = op.id;
+
+        if (op.value != -1) {
+            document.insertForm.style.display = 'none';
+            document.updateForm.style.display = 'block';
+            if (selectedItem == 'b_cate') {
+                var m_cate = document.getElementById('m_cate');
+                document.getElementById('insertCateNo').value = op.value;
+                document.getElementById('m_cate').style.display = 'inline-block';
+                document.getElementById('s_cate').style.display = 'none'
+
+                for (let i = 0; i < m_cate.length; i++) {
+                    if (m_cate.options[i].value == -1) continue;
+                    m_cate.options[i] = null;
+                }
+                m_cate.options.length = 1;
+
+                for (let i = 0; i < m_cate_list.length; i++) {
+                    if (m_cate_list[i].bcateNo == op.value) {
+                        var option = document.createElement('option');
+                        option.innerText = m_cate_list[i].name;
+                        option.value = m_cate_list[i].id;
+                        m_cate.append(option);
+                    }
+                }
+            } else if (selectedItem == 'm_cate') {
+                var s_cate = document.getElementById('s_cate');
+                document.getElementById('insertCateNo').value = op.value;
+                document.getElementById('s_cate').style.display = 'inline-block';
+
+                for (let i = 0; i < s_cate.length; i++) {
+                    if (s_cate.options[i].value == -1) continue;
+                    s_cate.options[i] = null;
+                }
+                s_cate.options.length = 1;
+
+                for (let i = 0; i < s_cate_list.length; i++) {
+                    if (s_cate_list[i].mcateNo == op.value) {
+                        var option = document.createElement('option');
+                        option.innerText = s_cate_list[i].name;
+                        option.value = s_cate_list[i].id;
+                        s_cate.append(option);
+                    }
+                }
+
+            } else if (selectedItem == 's_cate') {
+
+            }
+        } else {
+            var txt = document.getElementById('insertValue');
+            txt.value = "";
+            document.insertForm.style.display = 'block';
+            document.updateForm.style.display = 'none';
+            document.getElementById('insertOpt').value = selectedItem;
+            if (selectedItem == 'b_cate') {
+                txt.placeholder = '대분류 추가';
+            } else if (selectedItem == 'm_cate') {
+                txt.placeholder = '중분류 추가';
+            } else if (selectedItem == 's_cate') {
+                txt.placeholder = '소분류 추가';
+            }
+        }
+    }
+
+    function delete_category(op) {
+        let selectedItem = op.id;
+        if (op.value != -1) {
+            if (selectedItem == 'b_cate') {
+                for (let i = 0; i < b_cate_list.length; i++) {
+                    if (b_cate_list[i].id == op.value) {
+                        let ret = confirm("'" + b_cate_list[i].name + "' 카테고리를 삭제하시겠습니까?" +
+                            "\n(※ 하위 카테고리도 모두 삭제됩니다.)");
+                        if (ret) {
+                            location.href="/manager/delete?menu=category&deleteCateNo="+op.value+"&deleteOpt="+selectedItem;
+                        }
+                        return;
+                    }
+                }
+            } else if (selectedItem == 'm_cate') {
+                for (let i = 0; i < m_cate_list.length; i++) {
+                    if (m_cate_list[i].id == op.value) {
+                        let ret = confirm("'" + m_cate_list[i].name + "' 카테고리를 삭제하시겠습니까?" +
+                            "\n(※ 하위 카테고리도 모두 삭제됩니다.)");
+                        if (ret) {
+                            location.href="/manager/delete?menu=category&deleteCateNo="+op.value+"&deleteOpt="+selectedItem;
+                        }
+                        return;
+                    }
+                }
+            } else if (selectedItem == 's_cate') {
+                for (let i = 0; i < s_cate_list.length; i++) {
+                    if (s_cate_list[i].id == op.value) {
+                        let ret = confirm("'" + s_cate_list[i].name + "' 카테고리를 삭제하시겠습니까?" +
+                            "\n(※ 하위 카테고리도 모두 삭제됩니다.)");
+                        if (ret) {
+                            location.href="/manager/delete?menu=category&deleteCateNo="+op.value+"&deleteOpt="+selectedItem;
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+</script>
+<body>
+선택은 클릭<br>
+삭제는 더블클릭<br>
+추가는 최상단 클릭<br>
+<select size="10" id="b_cate" onclick="select_cate_option(this)" ondblclick="delete_category(this)">
+    <option value="-1">대분류 추가</option>
+</select>
+<select size="10" id="m_cate" onclick="select_cate_option(this)" ondblclick="delete_category(this)">
+    <option value="-1">중분류 추가</option>
+</select>
+<select size="10" id="s_cate" onclick="select_cate_option(this)" ondblclick="delete_category(this)">
+    <option value="-1">소분류 추가</option>
+</select>
+<br>
+<form action="/manager/update" name="updateForm" method="post">
+    <input type="hidden" name="menu" value="category"/>
+    <input type="hidden" name="updateOpt" value="" id="updateOpt"/>
+    <input type="hidden" name="updateCateNo" value="" required/>
+    <input type="text" id="updateValue" name="updateCategoryValue" placeholder="대분류 추가" required/>
+    <input type="submit"/>
+</form>
+<form action="/manager/create" name="insertForm" method="post">
+    <input type="hidden" name="menu" value="category"/>
+    <input type="hidden" name="insertOpt" value="" id="insertOpt"/>
+    <input type="hidden" name="insertCateNo" id="insertCateNo" value="" required/>
+    <input type="text" id="insertValue" name="insertCategoryValue" placeholder="대분류 추가" required/>
+    <input type="submit"/>
+</form>
+<input type="button" value="목록" onclick="location.href='/manager/'"/>
+</body>
+</html>

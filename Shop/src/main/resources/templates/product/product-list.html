@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>OnePage Bootstrap Template - Index</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+  <style>
+
+  </style>
+</head>
+
+<body>
+<th:block th:include="@{/main/index-header}"/>
+<main id="main">
+  <article class="breadcrumbs-top">
+    <th:block th:if="${dataContainer.BCategory != null}" >
+      <h3 th:text="${dataContainer.BCategory.name}"></h3>
+      <div class="product-category" th:if="${dataContainer.MCategory != null}">
+        <input th:class="${(dataContainer.MCategory.id == mCate.id) ? 'selected' : ''}" th:each="mCate : ${dataContainer.MCategoryList}" th:onclick="'location.href=\'/products/product-list?menu=sub-category&bCateNo='+${dataContainer.BCategory.id}+'&mCateNo='+${mCate.id} + '\''" type="button" th:value="${mCate.name}">
+      </div>
+      <div class="product-category" th:if="${dataContainer.MCategory == null}">
+        <input th:each="mCate : ${dataContainer.MCategoryList}" th:onclick="'location.href=\'/products/product-list?menu=sub-category&bCateNo='+${dataContainer.BCategory.id}+'&mCateNo='+${mCate.id} + '\''" type="button" th:value="${mCate.name}">
+      </div>
+    </th:block>
+    <th:block th:if="${dataContainer.BCategory == null}">
+      <h3>Category</h3>
+      <div class="product-category">
+        <input type="button" value="Sub Category">
+        <input type="button" value="Sub Category">
+        <input type="button" value="Sub Category">
+        <input type="button" value="Sub Category">
+        <input type="button" value="Sub Category">
+      </div>
+    </th:block>
+
+    <div class="sort-box">
+      <input class="" type="button" value="별점높은순">
+      <input type="button" value="구매많은순">
+      <input type="button" value="인기순">
+    </div>
+    <span id="total" th:text="'총 상품 수: ' + ${searchProductList.size()}"></span>
+    <hr>
+  </article>
+  <div class="product-list">
+    <div class="container">
+      <div class="row">
+        <div class="member col-sm-3" th:each="product : ${searchProductList}" style="margin-left: -20px;">
+          <div class="member-img">
+            <img th:src="'/upload/'+${product.productImage}" class="img-fluid" alt="">
+          </div>
+          <div class="member-info text-center">
+            <!-- 제품 이름 -->
+            <h5><a th:href="'/products/product-detail?productNo='+${product.id}" th:text="${product.name}"></a></h5>
+            <!-- 제품 평점 -->
+            <div>
+              <i th:if="${product.ratio != 0}" th:each="a : ${#numbers.sequence(1, product.ratio)}" class="icofont-ui-rating"></i><i th:each="b : ${#numbers.sequence(1, 5 - product.ratio)}" class="icofont-ui-rate-blank"></i>
+            </div>
+            <!-- 제품 가격 -->
+            <span th:if="${product.isSale == 1}">
+              <del th:text="${product.price} + '원'"></del><br>
+              <strong th:text="${product.discount} + '%'"></strong>
+              <strong class="price" th:text="${#numbers.formatInteger(product.price - (product.price * (product.discount / 100.0)), 3)} + '원'"></strong>
+            </span>
+            <!-- 할인율 -->
+            <span th:if="${product.isSale == 0}">
+              <strong th:text="${product.price}"></strong>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row align-content-center">
+        <input type="button" value="<">
+        <input type="button" value="1">
+        <input type="button" value="2">
+        <input type="button" value="3">
+        <input type="button" value=">">
+      </div>
+    </div>
+  </div>
+</main><!-- End #main -->
+<th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

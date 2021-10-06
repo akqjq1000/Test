@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.OptionValueMapper">
+    <select id="readList" resultType="com.idu.shop.domain.option.OptionValue">
+        <![CDATA[select * from option_value]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.option.OptionValue">
+        SELECT * FROM option_value WHERE id=#{id}
+    </select>
+    <select id="readByOptionNo" resultType="com.idu.shop.domain.option.OptionValue">
+        SELECT * FROM option_value WHERE optionNo=#{optionNo}
+    </select>
+    <insert id="insert">
+        INSERT INTO option_value VALUES(seq_option_value.nextval, #{name}, #{optionNo})
+    </insert>
+    <update id="update">
+        update option_value set name=#{name}, optionNo=#{optionNo} where id=#{id}
+    </update>
+    <delete id="deleteByOptionNo">
+        delete from option_value where optionNo=#{optionNo}
+    </delete>
+    <delete id="delete">
+        delete from option_value where id = #{id}
+    </delete>
+
+</mapper>

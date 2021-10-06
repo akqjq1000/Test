@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Portfolio Details - OnePage Bootstrap Template</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+
+  <script th:inline="javascript">
+
+    var totalPrices = 0;
+
+    /*<![CDATA[*/
+    let reviewList = [[ ${reviewList} ]];
+    /*]]*/
+
+    let $rating_list;
+
+    var cnt = 1;
+
+    window.onload = function() {
+      descriptionView();
+    }
+
+    function descriptionView() {
+      document.getElementById('descriptionBtn').parentNode.style.background = "#eee";
+      document.getElementById('reviewBtn').parentNode.style.background = "#fff";
+      document.getElementById('descriptionView').style.display = 'block';
+      document.getElementById('reviewView').style.display = 'none';
+
+    }
+    function reviewView() {
+      document.getElementById('descriptionBtn').parentNode.style.background = "#fff";
+      document.getElementById('reviewBtn').parentNode.style.background = "#eee";
+      document.getElementById('descriptionView').style.display = 'none';
+      document.getElementById('reviewView').style.display = 'block';
+    }
+    function sendReview() {
+      let loginEmail = document.getElementById('loginEmail').value;
+      let rating = document.getElementsByName('rating');
+      var flag = false;
+      if (loginEmail != '') {
+        if (document.getElementsByName('review')[0].value != '') {
+          for (let i = 0; i < rating.length; i++) {
+            if (rating[i].checked) {
+              flag = true;
+              break;
+            }
+          }
+          if (flag) {
+            document.detailForm.action = '/products/review';
+            document.detailForm.submit();
+          } else {
+            alert('별점을 입력해주세요!');
+          }
+        } else {
+          alert('리뷰를 입력해주세요!');
+        }
+      } else {
+        if (confirm('로그인 하시겠습니까?')) {
+          location.href="/members/loginView";
+        }
+      }
+    }
+    function removeBtn() {
+      $(this).parent().remove();
+    }
+
+    function addProduct(sel, productNo) {
+      let selectLength = document.detailForm.getElementsByTagName('select').length;
+      var selectList = [];
+      for (let i = 0; i < selectLength; i++) {
+        selectList[i] = document.detailForm.getElementsByTagName('select')[i];
+      }
+
+      var flag = true;
+
+      for (let i = 0; i < selectLength; i++) {
+        if (selectList[i].value == -1) flag = false;
+      }
+
+      var checker = 0;
+
+      for (let i = 1; i <= cnt; i++) {
+        let optionList = document.getElementsByName('options'+i);
+        for (let j = 0; j < optionList.length; j++) {
+          for (let k = 0; k < selectLength; k++) {
+            if (optionList[j].value == selectList[k].value) checker++;
+          }
+        }
+      }
+
+      if (checker == selectLength) {
+        alert('이미 담겨있는 옵션입니다.');
+        for (let i=0; i<selectLength; i++) {
+          selectList[i].value = -1;
+        }
+        return;
+      }
+
+      if (flag) {
+        let divRow = document.createElement('div');
+        let product_container = document.getElementById('product-container').appendChild(divRow);
+        let inputProductNo = document.createElement('input');
+        let h5ProductName = document.createElement('h5');
+        let inputCount = document.createElement('input');
+        let inputCancelButton = document.createElement('input');
+
+        inputProductNo.type = 'hidden';
+        inputProductNo.name = 'productNo' + cnt;
+        inputProductNo.value = productNo;
+
+        h5ProductName.innerText = document.getElementById('productName').innerText;
+        h5ProductName.style.display = "block";
+        h5ProductName.style.padding = '10px';
+        h5ProductName.style.fontSize = '15pt';
+
+        inputCount.type = 'number';
+        inputCount.value = '1' ;
+        inputCount.addEventListener('change', function () {
+          if (this.value < 1) {
+            this.value = '1';
+            return;
+          }
+          
+          let price = document.getElementsByClassName('prices')[0].innerText * this.value;
+
+          totalPrices += price;
+
+          document.getElementById('totalPrice').innerText = '금액: ' + totalPrices;
+        });
+        inputCount.name = 'count' + cnt;
+
+        inputCancelButton.type = 'button';
+        inputCancelButton.value = '삭제';
+        inputCancelButton.addEventListener('click', removeBtn);
+
+        product_container.appendChild(inputProductNo);
+        product_container.appendChild(h5ProductName);
+        for (let i = 0; i < selectLength; i++) {
+          let spanProductOption = document.createElement('span');
+          let inputHiddenOptionValueNo = document.createElement('input');
+
+          inputHiddenOptionValueNo.type = 'hidden';
+          inputHiddenOptionValueNo.name = 'options' + cnt;
+          inputHiddenOptionValueNo.value= '' + selectList[i].value;
+
+          spanProductOption.innerText = selectList[i].options[selectList[i].selectedIndex].text;
+          spanProductOption.style.marginRight = '30px';
+          spanProductOption.style.fontSize = '12pt';
+
+          product_container.appendChild(spanProductOption);
+          product_container.appendChild(inputHiddenOptionValueNo);
+        }
+
+        product_container.appendChild(inputCount);
+        product_container.appendChild(inputCancelButton);
+
+        let price = document.getElementsByClassName('prices')[0].innerText;
+
+        totalPrices += parseInt(price);
+
+        document.getElementById('totalPrice').innerText = '금액: ' + totalPrices;
+        document.getElementsByName('cnt')[0].value = cnt;
+        cnt = cnt + 1;
+
+        for (let i=0; i<selectLength; i++) {
+          selectList[i].value = -1;
+        }
+        document.getElementsByClassName('product-options')[0].style.bottom = '0';
+        document.getElementById('product-options-toggle').innerText = '▼';
+      }
+    }
+    function sendBuy() {
+      if (document.getElementById('product-container').childElementCount > 0) {
+        document.detailForm.action = '/orders/payment-view';
+        document.detailForm.submit();
+      } else {
+        alert('옵션을 선택해주세요.');
+      }
+    }
+
+    function sendCart() {
+      if (document.getElementById('product-container').childElementCount > 0) {
+        document.detailForm.action = '/orders/add-shopping-cart';
+        document.detailForm.submit();
+      } else {
+        alert('옵션을 선택해주세요.');
+      }
+    }
+    function sortingList(arr, option) {
+      if (option == 'asc' || option == 'ASC') {
+        for (let i = 0; i < arr.length - 1; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            if (arr[i].ratio < arr[j].ratio) {
+              let temp = arr[j];
+              arr[j] = arr[i];
+              arr[i] = temp;
+            }
+          }
+        }
+      } else if (option == 'desc' || option=='DESC') {
+        for (let i = 0; i < arr.length - 1; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            if (arr[i].ratio > arr[j].ratio) {
+              let temp = arr[j];
+              arr[j] = arr[i];
+              arr[i] = temp;
+            }
+          }
+        }
+      } else if (option == 'date' || option == 'DATE') {
+        for (let i = 0; i < arr.length - 1; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            if (arr[i].regdate < arr[j].regdate) {
+              let temp = arr[j];
+              arr[j] = arr[i];
+              arr[i] = temp;
+            }
+          }
+        }
+      }
+
+      return arr;
+    }
+    function sortRatioASC() {
+      sortRatio('asc');
+    }
+    function sortRatioDESC() {
+      sortRatio('desc');
+    }
+    function sortRatioRecently() {
+      sortRatio('date');
+    }
+    function sortRatio(option) {
+      let size = document.getElementsByClassName('rating-list').length;
+      for (let i = 0; i < size; i++) {
+        document.getElementsByClassName('rating-list')[i].remove();
+      }
+
+      let reviewSize = reviewList.length;
+
+      let arr = sortingList(reviewList, option);
+
+      let rating_list = document.createElement('div');
+      rating_list.className = 'rating-list';
+      for (let i = 0; i < reviewSize; i++) {
+        let liContainer = document.createElement('li');
+        liContainer.name = 'userRatio';
+        liContainer.title = arr[i].ratio;
+        let divTemp = document.createElement('div');
+        for (let j = 0; j < arr[i].ratio; j++) {
+          let spanStar = document.createElement('span');
+          spanStar.className='icofont-ui-rating';
+          divTemp.appendChild(spanStar);
+        }
+        for (let j = 0; j < 5 - arr[i].ratio; j++) {
+          let spanStar = document.createElement('span');
+          spanStar.className='icofont-ui-rate-blank';
+          divTemp.appendChild(spanStar);
+        }
+        liContainer.appendChild(divTemp);
+        let pComments = document.createElement('p');
+        pComments.innerText = arr[i].comments;
+        let pRegdate = document.createElement('p');
+        pRegdate.innerText = arr[i].regdate;
+        liContainer.appendChild(pComments);
+        liContainer.appendChild(pRegdate);
+        rating_list.appendChild(liContainer);
+      }
+      $('#rating-view').append(rating_list);
+    }
+    function downProductOptions(productOptionsToggle) {
+      let productOptions = document.getElementsByClassName('product-options')[0];
+
+      if (productOptionsToggle.innerText == '▼') {
+        productOptionsToggle.innerText = '▲';
+        let childrenCount = document.getElementById('product-container').children.length;
+        productOptions.style.bottom = '-'+ ((childrenCount * 82) + 59) +'px';
+        productOptions.style.transition = '0.5s';
+      } else {
+        productOptions.style.bottom = '0';
+        productOptionsToggle.innerText = '▼';
+      }
+
+    }
+  </script>
+  <style>
+    .product-options {
+      position: fixed;
+      width: 450px;
+      margin: 0 auto;
+      z-index: 333;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      text-align: center;
+      background: transparent;
+      border: 3px solid #eee;
+      background: #fff;
+    }
+    .product-options input[type=button]{
+      width: 100px;
+      height: 30px;
+      font-size: 13pt;
+      font-weight: 600;
+      background-color: transparent;
+      color: #417fb0;
+      border: none;
+    }
+
+    .product-options input[type=button]:hover {
+      background: #417fb0;
+      color: #fff;
+      transition: 0.4s;
+    }
+    #product-options-toggle {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <th:block th:include="@{/main/index-header}"></th:block>
+
+  <form name="detailForm" method="post">
+  <main id="main">
+
+    <article class="breadcrumbs-top">
+      <h3>Product Detail</h3><br>
+      <hr>
+    </article>
+    <div class="product-options">
+      <h4 id="product-options-toggle" onclick="downProductOptions(this)">▼</h4>
+      <div id="product-container">
+      </div>
+      <div>
+        <span id="totalPrice">금액 : </span>
+      </div>
+      <input type="button" value="구매하기" style="width: 100px;" onclick="sendBuy()">
+      <input type="button" value="장바구니" style="width: 100px;" onclick="sendCart()">
+    </div>
+
+    <!-- ======= Portfolio Details Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+      <div class="container" data-aos="fade-up">
+        <div class="portfolio-details-container">
+          <div class="owl-carousel portfolio-details-carousel">
+            <th:block th:each="pi : ${productImageList}">
+              <img th:src="'/upload/'+${pi.filename}" class="img-fluid" alt="">
+            </th:block>
+
+          </div>
+
+          <div class="product-info">
+            <h3 id="productName" th:text="${product.name}"></h3>
+            <br>
+            <div class="product-rating">
+              <th:block th:if="${reviewList.size() != 0}">
+                <i th:each="a : ${#numbers.sequence(1, product.ratio)}" class="icofont-ui-rating"></i><i th:each="b : ${#numbers.sequence(1, 5 - product.ratio)}" class="icofont-ui-rate-blank" th:if="${(product.ratio) / reviewList.size() != 5}"></i>
+              </th:block>
+              <th:block th:if="${reviewList.size() == 0}">
+                <i th:each="b : ${#numbers.sequence(1, 5)}" class="icofont-ui-rate-blank"></i>
+              </th:block>
+              <span style="font-size: 10pt;" th:text="'리뷰('+${reviewList.size()}+')/구매('+${product.soldCount}+')'"></span>
+            </div>
+            <br>
+            <h6 th:text="${product.description}"></h6>
+            <hr>
+            <div class="product-price">
+              <th:block th:if="${product.isSale == 1}">
+                <del th:text="${product.price} + '원'"></del>
+                <strong th:text="${product.discount} + '%'"></strong>
+                <span class="prices" th:text="${#numbers.formatInteger(product.price - (product.price * (product.discount / 100.0)), 0)}"></span><br>
+                <span th:text="'point: ' + ${#numbers.formatInteger((product.price - (product.price * (product.discount / 100.0)))  * 0.001, 0)}"></span>
+              </th:block>
+              <span th:if="${product.isSale == 0}">
+                <strong class="prices" th:text="${product.price}"></strong>
+                <br>
+                <span th:text="'point: ' + ${#numbers.formatInteger(product.price * 0.001, 0)}"></span>
+              </span>
+            </div>
+
+            <hr>
+            <div class="product-option">
+                <input type="hidden" name="menu" value="payment">
+                <input type="hidden" name="cnt" vlaue="">
+                <th:block th:if="${optionList.size() != 0}">
+                  <select style="width: 100%;" th:id="'sel'+${option.id}" th:each="option: ${optionList}" th:onchange="'addProduct(this,'+${product.id}+')'">
+                    <option value="-1" th:text="${option.name}"></option>
+                    <th:block th:each="optionValues: ${optionValueList}">
+                      <option th:value="${optionValue.id}" th:if="${option.id == optionValue.optionNo}" th:each="optionValue: ${optionValues}" th:text="${optionValue.name}"></option>
+                    </th:block>
+                    <input type="hidden" name="optionNo" th:value="${option.id}">
+                  </select>
+                  <hr>
+                </th:block>
+            </div>
+            <a th:href="'/members/add-heart?id='+${product.id}"><i class="icofont-heart"></i>찜</a>
+          </div>
+        </div>
+        <div class="portfolio-description">
+          <div class="row">
+            <ul class="product-detail-menu">
+              <li onclick="descriptionView();"><a id="descriptionBtn">제품설명</a></li>
+              <li onclick="reviewView()"><a id="reviewBtn">리뷰</a></li>
+            </ul>
+          </div>
+          <div class="row" id="descriptionView">
+            <div class="explain-view">
+              <p>
+                <h2 th:text="${product.description}"></h2>
+                <img th:src="'/upload/'+${product.contentsImage}">
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="review-view" id="reviewView">
+              <h2>Review</h2>
+
+<!--              <form action="/products/review" method="post" name="reviewForm">-->
+                <ul id="rating-view">
+                  <li>
+                    <script>
+                      $('#star a').click(function(){
+                        $(this).parent().children("a").removeClass("on");
+                        $(this).addClass("on").prevAll("a").addClass("on");
+                        console.log($(this).attr("value"));
+                      });
+                    </script>
+                    <div class="star-rating">
+                      <input type="radio" id="5-star" name="rating" value="5" />
+                      <label for="5-star" class="star">&#9733;</label>
+                      <input type="radio" id="4-star" name="rating" value="4" />
+                      <label for="4-star" class="star">&#9733;</label>
+                      <input type="radio" id="3-star" name="rating" value="3" />
+                      <label for="3-star" class="star">&#9733;</label>
+                      <input type="radio" id="2-star" name="rating" value="2" />
+                      <label for="2-star" class="star">&#9733;</label>
+                      <input type="radio" id="1-star" name="rating" value="1" />
+                      <label for="1-star" class="star">&#9733;</label>
+                    </div>
+                    <input type="hidden" name="productNo" th:value="${product.id}">
+                    <input type="hidden" id="loginEmail" th:value="${session.loginEmail}">
+                    <th:block th:if="${session.loginEmail != null}">
+                      <textarea style="width:100%;" name="review" placeholder="리뷰를 작성해주세요"></textarea>
+                    </th:block>
+                    <th:block th:if="${session.loginEmail == null}">
+                      <textarea style="width:100%;" name="review" disabled placeholder="로그인 후 작성이 가능합니다."></textarea>
+                    </th:block>
+                    <input style="width:100%;" type="button" onclick="sendReview()" value="리뷰 작성">
+
+                    <tr>
+                      <td id="btn" colspan="3">
+                        <input type="button" value="평점 높은 순" onclick="sortRatioASC();" style="width:30%;height: 20px;font-size: 8px">
+                        <input type="button" value="평점 낮은 순" onclick="sortRatioDESC();" style="width:30%;height: 20px;font-size: 8px">
+                        <input type="button" value="최신 순" onclick="sortRatioRecently();" style="width:30%;height: 20px;font-size: 8px">
+                      </td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </li>
+                  <div class="rating-list">
+                    <li th:each="review : ${reviewList}" name="userRatio" th:title="${review.ratio}">
+                      <div>
+                        <span th:each="a : ${#numbers.sequence(1, review.ratio)}" class="icofont-ui-rating"></span><span th:each="b : ${#numbers.sequence(1, 5 - review.ratio)}" class="icofont-ui-rate-blank" th:if="${review.ratio != 5}"></span>
+                      </div>
+                      <p th:text="${review.comments}"></p>
+                      <p th:text="${review.regdate}"></p>
+                    </li>
+                  </div>
+                </ul>
+<!--              </form>-->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Portfolio Details Section -->
+
+  </main><!-- End #main -->
+  </form>
+  <th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>OnePage Bootstrap Template - Index</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+
+  <script>
+    setTimeout(showSlide, 7000);
+
+    function showSlide() {
+      let chk_radio = document.getElementsByName('pos');
+      for (let i = 0; i < chk_radio.length; i++) {
+        if (chk_radio[i].checked == true) {
+          if (i + 1 > chk_radio.length - 1) {
+            i = -1;
+          }
+          chk_radio[i + 1].checked = true;
+          break;
+        }
+      }
+      setTimeout(showSlide, 7000);
+    }
+  </script>
+</head>
+
+<body>
+
+  <th:block th:include="@{/main/index-header}"/>
+  <!-- ======= Banner Section ======= -->
+  <div class="container">
+    <div class="row">
+      <section style="margin-top: 125px; padding: 0;" class="row">
+        <div id="slide">
+          <input type="radio" name="pos" id="pos1" checked>
+          <input type="radio" name="pos" id="pos2">
+          <input type="radio" name="pos" id="pos3">
+          <input type="radio" name="pos" id="pos4">
+          <ul>
+            <li>
+              <img src="/assets/img/banner/man-banner-1.jpg" width="100%" height="100%">
+            </li>
+            <li>
+              <img src="/assets/img/banner/man-banner-2.jpg" width="100%" height="100%">
+            </li>
+            <li>
+              <img src="/assets/img/banner/man-banner-3.jpg" width="100%" height="100%">
+            </li>
+            <li>
+              <img src="/assets/img/banner/man-banner-4.jpg" width="100%" height="100%">
+            </li>
+          </ul>
+          <p class="pos">
+            <label for="pos1"></label>
+            <label for="pos2"></label>
+            <label for="pos3"></label>
+            <label for="pos4"></label>
+          </p>
+        </div>
+      </section><!-- End Banner -->
+    </div>
+  </div>
+
+
+  <main id="main">
+    <!-- ======= Population Product Section ======= -->
+    <section id="team" class="team section-bg">
+      <div class="container">
+        <div class="section-title">
+          <h2>population</h2>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-6 d-flex align-items-stretch" th:each="product : ${application.dataContainer.productList}" th:if="${product.isHit > 0}">
+            <div class="member">
+              <div class="member-img">
+                <img th:src="'/upload/'+${product.productImage}" class="img-fluid" alt="">
+                <div class="social">
+                  <a th:href="'/upload/'+${product.productImage}" data-gall="portfolioGallery" class="venobox" th:title="${product.name}"><i class="bx bx-plus"></i>확대</a>
+                  <a th:href="'/members/add-heart?id='+${product.id}"><i class="icofont-heart"></i>찜</a>
+                </div>
+              </div>
+              <div class="member-info">
+                <h4><a th:text="${product.name}" th:href="'/products/product-detail?productNo=' + ${product.id}"></a></h4>
+                <span th:if="${product.isSale == 1}">
+                  <strong th:text="${product.discount} + '%'"></strong>
+                  <del th:text="${product.price}"></del><br>
+                  <strong th:text="${#numbers.formatInteger(product.price - (product.price * (product.discount / 100.0)), 3)} + '원'"></strong>
+                </span>
+                <span th:if="${product.isSale == 0}"><strong th:text="${product.price}"></strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- End Population Product Section -->
+
+    <!-- ======= Sale Product Section ======= -->
+    <section id="portfolio" class="portfolio">
+      <div class="container">
+        <div class="section-title">
+          <h2>sale</h2>
+        </div>
+        <div class="row">
+          <div class="col-lg-12 d-flex justify-content-center">
+            <ul id="portfolio-flters">
+              <li data-filter="*" class="filter-active">All</li>
+              <li th:each="bCate : ${application.dataContainer.BCategoryList}" th:data-filter="'.filter-' + ${bCate.id}" th:text="${bCate.name}"></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row portfolio-container">
+          <th:block th:each="product: ${application.dataContainer.productList}" th:if="${product.isSale > 0}">
+            <div th:class="'col-lg-4 col-md-6 portfolio-item'+ ' filter-'+${product.BCateNo}">
+              <div class="portfolio-wrap">
+                <img th:src="'/upload/'+${product.productImage}" class="img-fluid" alt="">
+                <div class="portfolio-info">
+                  <h4 th:text="${product.name}"></h4>
+                  <p>
+                    <del th:text="${product.price} + '원'"></del><br>
+                    <strong th:text="${product.discount} + '%'"></strong>
+                    <strong th:text="${#numbers.formatInteger(product.price - (product.price * (product.discount / 100.0)), 3)} + '원'"></strong>
+                  </p>
+                  <div class="portfolio-links">
+                    <a th:href="'/upload/'+${product.productImage}" data-gall="portfolioGallery" class="venobox" th:title="${product.name}"><i class="bx bx-plus"></i></a>
+                    <a th:href="'/products/product-detail?productNo='+${product.id}" title="More Details"><i class="bx bx-link"></i></a>
+                    <a th:href="'/members/add-heart?id='+${product.id}"><i class="icofont-heart"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </th:block>
+        </div>
+
+      </div>
+      <div class="block text-center plus-button">
+        <i class="icofont-arrow-down"></i>
+      </div>
+
+      <section id="" class="team section-bg">
+        <div class="container">
+          <div class="section-title">
+            <h2>new</h2>
+          </div>
+          <div class="row">
+            <div class="col-lg-3 col-md-6 d-flex align-items-stretch" th:each="product : ${application.dataContainer.productList}" th:if="${product.isNew > 0}">
+              <div class="member">
+                <div class="member-img">
+                  <img th:src="'/upload/'+${product.productImage}" class="img-fluid" alt="">
+                  <div class="social">
+                    <a th:href="'/upload/'+${product.productImage}" data-gall="portfolioGallery" class="venobox" th:title="${product.name}"><i class="bx bx-plus"></i>확대</a>
+                    <a th:href="'/members/add-heart?id='+${product.id}"><i class="icofont-heart"></i>찜</a>
+                  </div>
+                </div>
+                <div class="member-info">
+                  <h4><a th:text="${product.name}" th:href="'/products/product-detail?productNo=' + ${product.id}"></a></h4>
+                  <span th:if="${product.isSale == 1}">
+                  <strong th:text="${product.discount} + '%'"></strong>
+                  <del th:text="${product.price}"></del><br>
+                  <strong th:text="${#numbers.formatInteger(product.price - (product.price * (product.discount / 100.0)), 3)} + '원'"></strong>
+                </span>
+                  <span th:if="${product.isSale == 0}"><strong th:text="${product.price}"></strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section><!-- End Population Product Section -->
+
+    </section>
+
+  </main><!-- End #main -->
+<th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

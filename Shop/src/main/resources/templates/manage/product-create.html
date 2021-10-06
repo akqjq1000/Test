@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="@{/main/index-include}"></th:block>
+    <title>Title</title>
+    <script th:inline="javascript">
+
+        var cnt = 1;
+
+        /*<![CDATA[*/
+        let b_cate_list = [[ ${bCategoryList} ]];
+        let m_cate_list = [[ ${mCategoryList} ]];
+        let s_cate_list = [[ ${sCategoryList} ]];
+        /*]]*/
+
+        window.onload = function () {
+            var b_cate = document.getElementById('b_cate');
+            document.getElementById('m_cate').style.display = 'none';
+            document.getElementById('s_cate').style.display = 'none';
+
+            for (let i =0; i < b_cate_list.length; i++) {
+                var option = document.createElement('option');
+                option.innerText = b_cate_list[i].name;
+                option.value = b_cate_list[i].id;
+                b_cate.append(option);
+            }
+        }
+
+        function select_cate_option(op) {
+            var selectedItem = op.id;
+
+            if (op.value != -1) {
+                if (selectedItem == 'b_cate') {
+                    var m_cate = document.getElementById('m_cate');
+                    document.getElementById('m_cate').style.display = 'inline-block';
+                    document.getElementById('s_cate').style.display = 'none'
+
+                    for (let i = 0; i < m_cate.length; i++) {
+                        if (m_cate.options[i].value == -1) continue;
+                        m_cate.options[i] = null;
+                    }
+                    m_cate.options.length = 1;
+
+                    for (let i = 0; i < m_cate_list.length; i++) {
+                        if (m_cate_list[i].bcateNo == op.value) {
+                            var option = document.createElement('option');
+                            option.innerText = m_cate_list[i].name;
+                            option.value = m_cate_list[i].id;
+                            m_cate.append(option);
+                        }
+                    }
+                } else if (selectedItem == 'm_cate') {
+                    var s_cate = document.getElementById('s_cate');
+                    document.getElementById('s_cate').style.display = 'inline-block';
+
+                    for (let i = 0; i < s_cate.length; i++) {
+                        if (s_cate.options[i].value == -1) continue;
+                        s_cate.options[i] = null;
+                    }
+                    s_cate.options.length = 1;
+
+                    for (let i = 0; i < s_cate_list.length; i++) {
+                        if (s_cate_list[i].mcateNo == op.value) {
+                            var option = document.createElement('option');
+                            option.innerText = s_cate_list[i].name;
+                            option.value = s_cate_list[i].id;
+                            s_cate.append(option);
+                        }
+                    }
+
+                } else if (selectedItem == 's_cate') {
+                }
+            } else {
+                document.getElementById('insertOpt').value = selectedItem;
+            }
+        }
+        function addImage(btn) {
+            let addImageContainer = document.getElementById('addImageContainer');
+
+            let divAddImage = document.createElement('div');
+            let inputProductImage = document.createElement('input');
+            let inputDelButton = document.createElement('input');
+
+            divAddImage.id = 'addImage'+cnt;
+
+            inputProductImage.type = 'file';
+            inputProductImage.name = 'productImage';
+
+            inputDelButton.type = 'button';
+            inputDelButton.addEventListener('click', function () {delImage(inputDelButton);});
+            inputDelButton.value = '삭제';
+
+            divAddImage.appendChild(inputProductImage);
+            divAddImage.appendChild(inputDelButton);
+
+            addImageContainer.appendChild(divAddImage);
+            cnt++;
+        }
+
+        function delImage(btn) {
+            if (btn.parentNode.parentNode.id == 'addImageContainer') {
+                btn.parentNode.remove();
+            } else {
+                let productImageNo = btn.parentNode.firstElementChild.value;
+                if (confirm('정말 삭제하시겠습니까?')) {
+                    location.href='/manager/delete?menu=productImage&productImageNo='+productImageNo + '&productNo='+document.getElementsByName('id')[0].value;
+                } else {
+                    btn.event.preventDefault();
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<form method="post" action="/manager/product-create" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-sm-5">
+                <input type="hidden" name="menu" value="product">
+                <table>
+                    <tr>
+                        <td>제품명</td>
+                        <td><input type="text" name="name"></td>
+                    </tr>
+                    <tr>
+                        <td>가격</td>
+                        <td><input type="number" name="price" value="0"></td>
+                    </tr>
+                    <tr>
+                        <td>코드</td>
+                        <td><input type="text" name="code"></td>
+                    </tr>
+                    <tr>
+                        <td>제조사</td>
+                        <td><input type="text" name="copName"></td>
+                    </tr>
+                    <tr>
+                        <td>배송사</td>
+                        <td><input type="text" name="courier"></td>
+                    </tr>
+                    <tr>
+                        <td>설명</td>
+                        <td><textarea name="description"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td>대표이미지</td>
+                        <td><input type="file" name="productsImage"></td>
+                    </tr>
+                    <tr>
+                        <td>카테고리</td>
+                        <td>
+                            <select id="b_cate" name="bCateNo" onclick="select_cate_option(this)">
+                                <option value="-1">대분류</option>
+                            </select>
+                            <select id="m_cate" name="mCateNo" onclick="select_cate_option(this)">
+                                <option value="-1">중분류</option>
+                            </select>
+                            <select id="s_cate" name="sCateNo" onclick="select_cate_option(this)">
+                                <option value="-1">소분류</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>상품</td>
+                        <td>
+                            신상<input type="checkbox" name="isCheck" value="isNew">
+                            인기<input type="checkbox" name="isCheck" value="isHit">
+                            세일<input type="checkbox" name="isCheck" value="isSale">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>할인율</td>
+                        <td><input type="number" name="discount" value="0"></td>
+                    </tr>
+                    <tr>
+                        <td>상태</td>
+                        <td>
+                            판매중지<input type="radio" name="status" value="0" checked>
+                            판매중<input type="radio" name="status" value="1">
+                            매진<input type="radio" name="status" value="2">
+                            준비중<input type="radio" name="status" value="3">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>재고</td>
+                        <td><input type="number" name="stock" value="0"></td>
+                    </tr>
+                    <tr>
+                        <td>배송비</td>
+                        <td><input type="number" name="shippingFee" value="0"></td>
+                    </tr>
+                </table>
+                <input type="submit">
+            <input type="button" value="뒤로가기" onclick="location.href='/manager/product-manage';">
+        </div>
+        <div class="col-sm-5">
+            <br><h5>이미지 추가<input type="button" onclick="addImage()" value="추가"></h5>
+            <div id="addImageContainer">
+                <div id="addImage0">
+                    <input name="productImage" type="file">
+                    <input type="button" onclick="delImage(this)" value="삭제">
+                </div>
+            </div>
+            <h5>옵션 추가</h5><br>
+            <th:block th:each="opt: ${optionList}">
+                <input type="checkbox" name="optionCheck" th:value="${opt.id}" th:text="${opt.name}">
+            </th:block>
+
+        </div>
+    </div>
+    <hr>
+    <h5>설명 이미지</h5>
+    <input type="file" name="contentsImage"><br>
+</form>
+</body>
+</html>

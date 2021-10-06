@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.ShoppingCartOptionMapper">
+    <select id="readList" resultType="com.idu.shop.domain.order.ShoppingCartOption">
+        <![CDATA[select * from shopping_cart_option]]>
+    </select>
+    <select id="readByMemberNoList" resultType="com.idu.shop.domain.order.ShoppingCartOption">
+        <![CDATA[select * from shopping_cart_option where memberNo=#{memberNo}]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.order.ShoppingCartOption">
+        SELECT * FROM shopping_cart_option WHERE shoppingCartNo=#{shoppingCartNo}
+    </select>
+    <insert id="insert">
+        INSERT INTO shopping_cart_option VALUES(#{shoppingCartNo}, #{optionNo}, #{optionValueNo})
+    </insert>
+    <update id="update">
+        update shopping_cart_option set memberNo=#{memberNo}, productNo=#{productNo}, discountPrice=#{discountPrice}, couponNo=#{couponNo}, totalPrice=#{totalPrice} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from shopping_cart_option where shoppingCartNo = #{id}
+    </delete>
+
+</mapper>

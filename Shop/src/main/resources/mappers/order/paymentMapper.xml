@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.PaymentMapper">
+    <select id="readList" resultType="com.idu.shop.domain.order.Payment">
+        <![CDATA[select * from payment]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.order.Payment">
+        SELECT * FROM payment WHERE id=#{id}
+    </select>
+    <select id="readByOrderSequence" resultType="com.idu.shop.domain.order.Payment">
+        SELECT * FROM payment WHERE orderSequence=#{orderSequence}
+    </select>
+    <select id="readByMemberNo" resultType="com.idu.shop.domain.order.Payment">
+        <![CDATA[SELECT * FROM payment WHERE memberNo=#{memberNo}]]>
+    </select>
+    <insert id="insert">
+        INSERT INTO payment VALUES(seq_payment.nextval, #{memberNo}, #{orderSequence}, #{memberShippingAddressNo}, #{cardType}, #{couponNo}, #{moneyType}, #{cardNumber}, #{moneyNumber}, #{paymentWay}, #{totalPrice}, SYSDATE)
+    </insert>
+    <update id="update">
+        update payment set memberNo=#{memberNo}, paymentWay=#{paymentWay}, totalPrice=#{totalPrice} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from payment where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.OptionMapper">
+    <select id="readList" resultType="com.idu.shop.domain.option.Option">
+        <![CDATA[select * from opt]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.option.Option">
+        SELECT * FROM opt WHERE id=#{id}
+    </select>
+    <select id="readByOptionNo" resultType="com.idu.shop.domain.option.Option">
+        SELECT * FROM opt WHERE id=#{optionNo}
+    </select>
+    <insert id="insert">
+        INSERT INTO opt VALUES(seq_option.nextval, #{name})
+    </insert>
+    <update id="update">
+        update opt set name=#{name} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from opt where id = #{id}
+    </delete>
+
+</mapper>

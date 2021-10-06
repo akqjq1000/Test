@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="@{/main/index-include}"></th:block>
+    <title>Title</title>
+    <script>
+        function addShippingAddress(no) {
+            document.getElementById('addForm'+no).style.display = 'block';
+            document.getElementById('add'+no).style.display = 'none';
+        }
+        function cancelAddShippingAddress(no) {
+            document.getElementById('addForm'+no).style.display = 'none';
+            document.getElementById('add'+no).style.display = 'inline-block';
+        }
+        function selectShippingAddress(no) {
+            opener.document.getElementsByName('name')[0].innerText = document.getElementsByName('childName')[no].value;
+            opener.document.getElementsByName('phone')[0].innerText = document.getElementsByName('childPhone')[no].value;
+            opener.document.getElementsByName('address')[0].innerText = document.getElementsByName('childAddress')[no].value;
+            opener.document.getElementsByName('comments')[0].innerText = document.getElementsByName('childComments')[no].value;
+            opener.document.getElementsByName('shippingAddressNo')[0].value = document.getElementsByName('childId')[no].value;
+            window.close();
+        }
+        function deleteShippingAddress(no) {
+            location.href="/members/delete-shipping-address?id="+no+"&menu=change-shipping-address";
+        }
+        function updateShippingAddress(no) {
+            document.getElementsByName('childName')[no].disabled = false;
+            document.getElementsByName('childPhone')[no].disabled = false;
+            document.getElementsByName('childAddress')[no].disabled = false;
+            document.getElementsByName('childComments')[no].disabled = false;
+            alert('');
+        }
+    </script>
+    <style>
+        body, div, form, input {
+            margin: 0;
+            padding: 0;
+        }
+        .shipping-address-select input{
+            width: 90%;
+        }
+
+        .shipping-address-button-collection input {
+            width: 32.96%;
+        }
+    </style>
+</head>
+<body>
+<h4>배송지 선택</h4>
+<div th:each="i : ${#numbers.sequence(0, 2)}">
+    <div th:if="${i < memberShippingAddressList.size()}" class="shipping-address-empty">
+        <form action="/members/update-shipping-address" class="shipping-address-select">
+            <input type="hidden" name="childId" th:value="${memberShippingAddressList.get(i).id}">
+            <input type="hidden" name="menu" value="change-shipping-address">
+            <input th:value="${memberShippingAddressList.get(i).name}" name="childName" disabled>
+            <input th:value="${memberShippingAddressList.get(i).phone}" name="childPhone" disabled>
+            <input th:value="${memberShippingAddressList.get(i).address}" name="childAddress" disabled>
+            <input th:value="${memberShippingAddressList.get(i).comments}" name="childComments" disabled>
+        </form>
+        <div class="shipping-address-button-collection">
+            <input type="button" value="수정" th:onclick="'updateShippingAddress('+${i}+')'">
+            <input type="button" value="삭제" th:onclick="'deleteShippingAddress('+${memberShippingAddressList.get(i).id}+')'">
+            <input type="button" value="선택" th:onclick="'selectShippingAddress('+${i}+')'">
+        </div>
+    </div>
+    <div th:if="${i > memberShippingAddressList.size() - 1}" class="shipping-address-empty">
+        <h6 th:id="'add'+${i}" th:onclick="'addShippingAddress('+${i}+')'">+</h6>
+        <form method="post" action="/members/add-shipping-address" class="shipping-address-form" th:id="'addForm'+${i}">
+            <input type="hidden" name="menu" value="change-shipping-address">
+            <input type="text" name="name" placeholder="이름">
+            <input type="text" name="phone" placeholder="전화번호">
+            <input type="text" name="address" placeholder="주소">
+            <input type="text" name="comments" placeholder="주문 시 요청사항">
+            <input type="submit" value="추가하기">
+            <input type="button" value="취소" th:onclick="'cancelAddShippingAddress('+${i}+')'">
+        </form>
+    </div>
+</div>
+</body>
+</html>

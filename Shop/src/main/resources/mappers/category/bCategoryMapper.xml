@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.bCategoryMapper">
+    <select id="readList" resultType="com.idu.shop.domain.category.bCategory">
+        <![CDATA[select * from b_category]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.category.bCategory">
+        SELECT * FROM b_category WHERE id=#{cateNo}
+    </select>
+    <insert id="insert">
+        INSERT INTO b_category VALUES(seq_b_category.nextval, #{name})
+    </insert>
+    <update id="update">
+        update b_category set name=#{name} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from b_category where id = #{cateNo}
+    </delete>
+
+</mapper>

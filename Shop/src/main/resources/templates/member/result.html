@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>OnePage Login - Find View</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+</head>
+
+<body>
+<th:block th:include="@{/main/index-header}"></th:block>
+<main id="main">
+
+  <!-- ======= Breadcrumbs ======= -->
+  <section id="breadcrumbs" class="breadcrumbs" style="margin-top: 125px;">
+    <div class="container">
+
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Login</h2>
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li>Find Email / Password</li>
+        </ol>
+      </div>
+
+    </div>
+  </section><!-- End Breadcrumbs -->
+
+  <!-- ======= Portfolio Details Section ======= -->
+  <section id="portfolio-details" class="portfolio-details">
+    <div class="container" data-aos="fade-up">
+      <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-5">
+
+          <h6 style="font-size: 15pt;" th:text="${result}"></h6>
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+    </div>
+  </section><!-- End Portfolio Details Section -->
+
+</main><!-- End #main -->
+<th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

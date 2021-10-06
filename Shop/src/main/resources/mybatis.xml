@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <mappers>
+        <mapper resource="mappers/category/bCategoryMapper.xml"/>
+        <mapper resource="mappers/category/mCategoryMapper.xml"/>
+        <mapper resource="mappers/category/sCategoryMapper.xml"/>
+        <mapper resource="mappers/member/memberMapper.xml"/>
+        <mapper resource="mappers/member/memberCouponMapper.xml"/>
+        <mapper resource="mappers/member/heartMapper.xml"/>
+        <mapper resource="mappers/member/memberShippingAddressMapper.xml"/>
+        <mapper resource="mappers/option/optionMapper.xml"/>
+        <mapper resource="mappers/option/optionValueMapper.xml"/>
+        <mapper resource="mappers/product/productMapper.xml"/>
+        <mapper resource="mappers/product/productImageMapper.xml"/>
+        <mapper resource="mappers/product/productOptionMapper.xml"/>
+        <mapper resource="mappers/order/cancelOrderMapper.xml"/>
+        <mapper resource="mappers/order/couponMapper.xml"/>
+        <mapper resource="mappers/order/deliveryMapper.xml"/>
+        <mapper resource="mappers/order/courierMapper.xml"/>
+        <mapper resource="mappers/order/orderMapper.xml"/>
+        <mapper resource="mappers/order/orderOptionMapper.xml"/>
+        <mapper resource="mappers/order/paymentMapper.xml"/>
+        <mapper resource="mappers/order/reviewMapper.xml"/>
+        <mapper resource="mappers/order/shoppingCartMapper.xml"/>
+        <mapper resource="mappers/order/shoppingCartOptionMapper.xml"/>
+    </mappers>
+</configuration>

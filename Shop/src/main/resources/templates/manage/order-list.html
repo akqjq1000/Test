@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Member Test</title>
+  <style>
+    form input {
+      display: block;
+    }
+    #list input {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+<div>입력 테스트</div>
+<form action="/manager/create" method="post">
+  <input type="hidden" name="menu" value="order">
+  <input type="text" name="memberNo" placeholder="memberNo">
+  <input type="text" name="productNo" placeholder="productNo">
+  <input type="text" name="discountPrice" placeholder="discountPrice">
+  <input type="text" name="couponNo" placeholder="couponNo">
+  <input type="text" name="count" placeholder="count">
+  <input type="text" name="totalPrice" placeholder="totalPrice">
+  <input type="text" name="orderDate" placeholder="orderDate">
+  <input type="submit" value="추가">
+  <br>
+</form>
+<div>출력 테스트</div>
+<form name="form" method="post">
+  <div th:if="${orderList != null}" id="list">
+    <div th:each="ord : ${orderList}">
+      <strong>id</strong>:<input type="text" name="id" th:value="${ord.id}" disabled><br>
+      <strong>memberNo</strong>:<input type="text" name="memberNo" th:value="${ord.memberNo}"></span><br>
+      <strong>productNo</strong>:<input type="text" name="productNo" th:value="${ord.productNo}"></span><br>
+      <strong>discountPrice</strong>:<input type="text" name="discountPrice" th:value="${ord.discountPrice}"></span><br>
+      <strong>couponNo</strong>:<input type="text" name="couponNo" th:value="${ord.couponNo}"></span><br>
+      <strong>count</strong>:<input type="text" name="count" th:value="${ord.count}"></span><br>
+      <strong>totalPrice</strong>:<input type="text" name="totalPrice" th:value="${ord.totalPrice}"></span><br>
+      <strong>orderDate</strong>:<input type="text" name="orderDate" th:value="${ord.orderDate}"></span><br>
+      <input type="button" th:onclick="'del('+${ord.id}+')'" value="삭제">
+      <input type="button" th:onclick="'upd('+${ord.id}+')'" value="수정">
+      <br><br>
+    </div>
+  </div>
+</form>
+
+<script>
+  function upd(id) {
+    document.form.action = "/manager/order-update?id="+id;
+    document.form.submit();
+  }
+  function del(id) {
+    document.form.action = "/manager/order-delete?id="+id;
+    document.form.submit();
+  }
+</script>
+</body>
+</html>

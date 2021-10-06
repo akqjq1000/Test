@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.CourierMapper">
+    <select id="readList" resultType="com.idu.shop.domain.order.Courier">
+        <![CDATA[select * from courier]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.order.Courier">
+        SELECT * FROM courier WHERE id=#{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO courier VALUES(seq_courier.nextval, #{name}, #{phone}, #{courier})
+    </insert>
+    <update id="update">
+        update courier set name=#{name}, phone=#{phone}, courier=#{courier} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from courier where id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Member Test</title>
+  <style>
+    form input {
+      display: block;
+    }
+    #list input {
+      display: inline-block;
+    }
+    form {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<input type="button" onclick="insertForm()" value="추가하기">
+<table>
+  <thead>
+  <tr>
+    <th>번호</th>
+    <th>쿠폰 이름</th>
+    <th>할인율</th>
+    <th>수정/삭제</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="coupon : ${couponList}">
+    <td th:text="${coupon.id}"></td>
+    <td th:text="${coupon.name}"></td>
+    <td th:if="${coupon.price != 0}" th:text="${coupon.price} + '원'"></td>
+    <td th:if="${coupon.percent != 0}" th:text="${coupon.percent} + '%'"></td>
+    <td>
+      <input type="button" th:onclick="'updateData('+${coupon.id}+');'" value="수정"> /
+      <input type="button" th:onclick="'deleteData('+${coupon.id}+');'" value="삭제">
+    </td>
+  </tr>
+  </tbody>
+</table>
+<h2 id="title">추가하기</h2>
+<form id="updateForm" action="/manager/update" method="post">
+  <input type="hidden" name="menu" value="option-value">
+  <input type="hidden" name="id" value="">
+  <input type="text" name="name" placeholder="name">
+  <input type="submit" value="수정하기">
+</form>
+<form id="insertForm" action="/manager/create" method="post">
+  <input type="hidden" name="menu" value="coupon">
+  <input type="text" name="name" placeholder="name">
+  <input type="text" name="price" placeholder="price">
+  <input type="text" name="percent" placeholder="percent">
+  <input type="submit" value="추가하기">
+</form>
+<script>
+
+  function insertForm() {
+    document.getElementById('insertForm').style.display = 'block';
+    document.getElementById('updateForm').style.display = 'none';
+  }
+  function updateData(optId) {
+    document.getElementsByName('id')[0].value = optId;
+    document.getElementsByName('name')[0].value = document.getElementById('opt'+optId).innerText;
+
+    document.getElementById('insertForm').style.display = 'none';
+    document.getElementById('updateForm').style.display = 'block';
+  }
+
+  function deleteData(optId) {
+    let yesno = confirm('삭제하시겠습니까?');
+    if (yesno) {
+      location.href='/manager/delete?menu=coupon&' + 'id='+optId;
+    } else {
+
+    }
+  }
+</script>
+</body>
+</html>

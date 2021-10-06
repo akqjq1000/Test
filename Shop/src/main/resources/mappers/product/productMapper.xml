@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.ProductMapper">
+    <select id="readList" resultType="com.idu.shop.domain.product.Product">
+        <![CDATA[select * from product]]>
+    </select>
+    <select id="searchByProductName" resultType="com.idu.shop.domain.product.Product">
+        <![CDATA[select * from product where name like '%' || #{productName} || '%']]>
+    </select>
+    <select id="readListByBCateNo" resultType="com.idu.shop.domain.product.Product">
+        <![CDATA[select * from product where bCateNo = #{bCateNo}]]>
+    </select>
+    <select id="readListByMCateNo" resultType="com.idu.shop.domain.product.Product">
+        <![CDATA[select * from product where mCateNo = #{mCateNo}]]>
+    </select>
+    <select id="readListByContentsImage" resultType="com.idu.shop.domain.product.Product">
+        <![CDATA[select * from product where contentsImage=#{contentsImage}]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.product.Product">
+        SELECT * FROM product WHERE code=#{code}
+    </select>
+    <select id="readById" resultType="com.idu.shop.domain.product.Product">
+        SELECT * FROM product WHERE id=#{productNo}
+    </select>
+    <insert id="insert">
+        INSERT INTO product VALUES(seq_product.nextval, #{name}, #{price}, #{code}, #{copName}, #{courier}, #{ratio}, #{description}, #{contentsImage}, #{bCateNo}, #{mCateNo}, #{sCateNo}, #{isNew}, #{isHit}, #{isSale}, #{discount}, #{status}, #{stock}, #{shippingFee}, #{soldCount}, sysdate, #{productImage})
+    </insert>
+    <update id="update">
+        update product set name=#{name}, price=#{price}, code=#{code}, copName=#{copName}, courier=#{courier}, ratio=#{ratio}, description=#{description}, contentsImage=#{contentsImage}, bCateNo=#{bCateNo}, mCateNo=#{mCateNo}, sCateNo = #{sCateNo}, isNew=#{isNew}, isHit=#{isHit}, isSale=#{isSale}, discount=#{discount}, status=#{status}, shippingFee=#{shippingFee}, stock=#{stock}, soldCount=#{soldCount}, productImage=#{productImage} where id=#{id}
+    </update>
+    <update id="increaseSoldCount">
+        update product set soldCount=#{soldCount}, stock=#{stock} where id=#{id}
+    </update>
+    <update id="updateToRatio">
+        update product set ratio=#{ratio} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from product where id = #{id}
+    </delete>
+
+</mapper>

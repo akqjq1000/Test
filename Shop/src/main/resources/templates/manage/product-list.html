@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Member Test</title>
+  <style>
+    form input {
+      display: block;
+    }
+    #list input {
+      display: inline-block;
+    }
+    form {
+      display: none;
+    }
+    tr:hover {
+      transition: 0.3s;
+      background: #eee;
+    }
+  </style>
+  <script>
+    function updateData(productNo) {
+      location.href='/manager/product-update-view?productNo='+productNo;
+    }
+    function deleteData(productNo) {
+      location.href='/manager/product-delete?productNo='+productNo;
+    }
+  </script>
+</head>
+<body>
+<form action="/manager/product-search" style="display: block;" method="get">
+  <input type="text" name="keyword" placeholder="검색할 단어를 입력하세요" style="display: inline-block;">
+  <input type="button" value="검색하기" style="display: inline-block">
+</form>
+<input type="button" onclick="location.href='/manager/product-create-view'" value="추가하기">
+<input type="button" value="전체보기" onclick="location.href='/manager/product-manage'">
+<table>
+  <thead>
+  <tr>
+    <th>번호</th>
+    <th>제품명</th>
+    <th>가격</th>
+    <th>제품코드</th>
+    <th>제조사</th>
+    <th>별점</th>
+    <th>신상/인기/세일</th>
+    <th>할인율</th>
+    <th>상태</th>
+    <th>재고</th>
+    <th>판매수</th>
+    <th>등록일</th>
+    <th>수정/삭제</th>
+  </tr>
+  </thead>
+  <tbody style="text-align: center">
+  <tr th:each="product : ${productList}">
+    <td th:text="${product.id}"></td>
+    <td th:text="${product.name}"></td>
+    <td th:text="${product.price}"></td>
+    <td th:text="${product.code}"></td>
+    <td th:text="${product.copName}"></td>
+    <td th:text="${product.ratio}"></td>
+    <td th:text="${product.isNew + '/' + product.isHit + '/' + product.isSale}"></td>
+    <td th:text="${product.discount}"></td>
+    <td th:text="${product.status}"></td>
+    <td th:text="${product.stock}"></td>
+    <td th:text="${product.soldCount}"></td>
+    <td th:text="${product.regdate}"></td>
+    <td>
+      <input type="button" value="수정" th:onclick="'updateData('+${product.id}+')'"> /
+      <input type="button" value="삭제" th:onclick="'deleteData('+${product.id}+')'">
+    </td>
+  </tr>
+  </tbody>
+</table>
+<input type="button" value="목록" onclick="location.href='/manager/'">
+</body>
+</html>

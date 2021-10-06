@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Portfolio Details - OnePage Bootstrap Template</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+  <script>
+    var cnt = 1;
+
+    function goPaymentView() {
+      for (let i = 0; i < document.getElementsByName('buy').length; i++) {
+        if (document.getElementsByName('buy')[i].checked) {
+          let hiddenProductNo = document.createElement('input');
+          let hiddenCount = document.createElement('input');
+
+          for (let j = 0; j < document.getElementsByName('opt'+i).length; j++) {
+              let hiddenOptionNo = document.createElement('input');
+
+              hiddenOptionNo.type = 'hidden';
+              hiddenOptionNo.name = 'options'+cnt;
+              hiddenOptionNo.value = '' + document.getElementsByName('opt'+i)[j].value;
+
+              document.getElementsByName('productName')[i].parentNode.appendChild(hiddenOptionNo);
+          }
+
+          hiddenProductNo.type = 'hidden';
+          hiddenProductNo.name = 'productNo'+cnt;
+          hiddenProductNo.value = '' + document.getElementsByName('productName')[i].title;
+
+          hiddenCount.type='hidden';
+          hiddenCount.name='count'+cnt;
+          hiddenCount.value=document.getElementsByName('count')[i].value;
+
+          document.getElementsByName('productName')[i].parentNode.appendChild(hiddenProductNo);
+          document.getElementsByName('productName')[i].parentNode.appendChild(hiddenCount);
+          document.getElementsByName('cnt')[0].value = cnt;
+          cnt++;
+        }
+      }
+      document.cartForm.submit();
+    }
+
+    function goDeleteShoppingCart() {
+      document.cartForm.action = '/orders/delete-shopping-cart';
+        for (let i = 0; i < document.getElementsByName('buy').length; i++) {
+            if (document.getElementsByName('buy')[i].checked) {
+                let hiddenShoppingCartNo = document.createElement('input');
+
+                hiddenShoppingCartNo.type= 'hidden';
+                hiddenShoppingCartNo.name= 'deleteShoppingCartNo';
+                hiddenShoppingCartNo.value = document.getElementsByName('scId')[i].value;
+
+                document.getElementsByName('productName')[i].parentNode.appendChild(hiddenShoppingCartNo);
+            }
+        }
+        document.cartForm.submit();
+    }
+
+    function plusCount(scId) {
+      let count = parseInt(document.getElementById('count'+scId).value) + 1;
+      document.getElementById('count'+scId).value = count;
+
+      document.getElementById('totalPrice'+scId).innerText = count * parseInt(document.getElementById('price'+scId).innerText);
+      sumPrice();
+    }
+
+    function minusCount(scId) {
+      let count = parseInt(document.getElementById('count'+scId).value) - 1;
+      if (count < 1) return;
+      document.getElementById('count'+scId).value = count;
+
+        document.getElementById('totalPrice'+scId).innerText = count * parseInt(document.getElementById('price'+scId).innerText);
+        sumPrice();
+    }
+
+    window.onload = function() {
+        sumPrice();
+    }
+
+    function sumPrice() {
+        let size = document.getElementsByName('totalPrice').length;
+        let totalPriceList = document.getElementsByName('totalPrice');
+        let shippingFeeList = document.getElementsByName('fee');
+        let productNoList = document.getElementsByName('productName');
+        let sum = 0;
+        let shippingFee = 0;
+        var overlap = 0;
+
+        for (let i = 0; i < productNoList.length; i++) {
+            let productNo = document.getElementsByName('productName')[i].title;
+            if (overlap != productNo) {
+                let fee = parseInt(shippingFeeList[i].value);
+                shippingFee += fee;
+                overlap = productNo;
+                if (i==0) continue;
+                document.getElementsByName('productName')[i].parentNode.parentNode.style.borderBottom = '1px solid #000';
+            } else {
+
+            }
+        }
+
+        for (let i = 0; i < size; i++) {
+            let totalPrice = parseInt(totalPriceList[i].innerText);
+            sum += totalPrice;
+        }
+
+        document.getElementById('totalPrice').innerText = '총상품가격: ' + (sum);
+        document.getElementById('shippingFee').innerText = '배송비: ' + (shippingFee);
+        document.getElementById('sumPrice').innerText = '총결제금액: ' + (sum + shippingFee);
+    }
+
+    function selectAll(selectAll)  {
+        const checkboxes = document.getElementsByName('buy');
+
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = selectAll.checked
+        });
+    }
+
+    function goDeleteAllShoppingCart() {
+        const checkboxes = document.getElementsByName('buy');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = true;
+        });
+        if (document.getElementsByName('buy').length == 0) {
+            return;
+        }
+        goDeleteShoppingCart();
+    }
+
+    function goAllPaymentView() {
+        const checkboxes = document.getElementsByName('buy');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = true;
+        });
+        if (document.getElementsByName('buy').length == 0) {
+            return;
+        }
+        goPaymentView();
+    }
+
+    </script>
+    <style>
+        table {
+            width: 1140px;
+            margin: auto;
+        }
+
+        table tr th, table tr td {
+            text-align: center;
+            font-family: "Raleway", sans-serif;
+        }
+
+        table tr th:nth-child(1) {width: 10%;}
+        table tr th:nth-child(2) {width: 25%;}
+        table tr th:nth-child(3) {width: 25%;}
+        table tr th:nth-child(4) {width: 30%;}
+        table tr th:nth-child(5) {width: 10%;}
+
+        table img {width: 120px; height: 160px;}
+
+        table thead tr th {
+            color: #417fb0;
+        }
+
+        table tfoot tr td {
+            text-align: right;
+        }
+        table tfoot tr {
+            margin-top: 20px;
+        }
+        #buttons input[type=button] {
+            width: 110px;
+            height: 30px;
+            margin: 0 auto;
+            color: #417fb0;
+            border: none;
+            background: #fff;
+        }
+        #buttons input[type=button]:hover {
+            transition: 0.4s;
+            background: #417fb0;
+            color: #fff;
+        }
+        .buttons input[type=button] {
+            width: 70%;
+            height: 50px;
+            margin: 10px;
+            font-size: 16pt;
+            color: #417fb0;
+            border: none;
+            background: #fff;
+        }
+        .buttons input[type=button]:hover {
+            transition: 0.4s;
+            background: #417fb0;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <th:block th:include="@{/main/index-header}"></th:block>
+    <main id="main">
+        <article class="breadcrumbs-top">
+            <h3>Shopping Cart</h3><br>
+            <hr>
+        </article>
+        <form action="/orders/payment-view" method="post" name="cartForm" class="cart-view">
+            <input type="hidden" name="menu" value="shoppingCart">
+            <input type="hidden" name="cnt">
+            <!-- ======= Portfolio Details Section ======= -->
+            <section id="portfolio-details" class="portfolio-details">
+                <header>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" width="10px" name="checking" onclick="selectAll(this)"></th>
+                            <th>이미지</th>
+                            <th>옵션</th>
+                            <th>수량</th>
+                            <th>가격</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="sc, sci : ${shoppingCartList}">
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="scId" th:value="${sc.id}">
+                                    <input type="checkbox" th:value="${sc.id}" width="10px" name="buy">
+                                </td>
+                                <td>
+                                    <a href="#">
+                                        <th:block th:each="p : ${application.dataContainer.productList}">
+                                            <img th:src="'/upload/'+${p.productImage}" th:if="${p.id == sc.productNo}">
+                                            <a name="productName" th:if="${sc.productNo == p.id}" th:title="${p.id}" th:text="${p.name}" th:href="'/products/product-detail?productNo='+${p.id}"></a>
+                                        </th:block>
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <th:block th:each="scoList, i : ${shoppingCartOptionList}">
+                                        <th:block th:each="sco : ${scoList}">
+                                            <th:block th:each="opt : ${optionList}">
+                                                <input th:name="'opt'+${i.index}" style="display: none;" type="text" th:value="${optValue.id}" th:each="optValue : ${optionValueList}" th:if="${opt.id == optValue.optionNo && optValue.id == sco.optionValueNo && sco.shoppingCartNo == sc.id}" th:text="${optValue.name}">
+                                            </th:block>
+                                        </th:block>
+                                    </th:block>
+                                </td>
+
+                                <td>
+                                    <th:block th:each="product : ${application.dataContainer.productList}" th:if="${product.id == sc.productNo}">
+                                        <span th:if="${product.isSale == 1}">
+                                            <del th:text="${#numbers.formatInteger(product.price, 3) }"></del><br>
+                                            <strong th:text="${product.discount} + '%'"></strong>
+                                            <strong th:id="'price' + ${sc.id}" th:text="${#numbers.formatInteger(product.price - (product.price * (product.discount / 100.0)), 3)}"></strong>
+                                        </span>
+                                        <span th:id="'price' + ${sc.id}" th:if="${product.isSale == 0}"><strong th:text="${product.price * sc.count}"></strong></span>
+                                    </th:block>
+                                    <br>
+                                    <input type="button" th:onclick="'plusCount('+${sc.id}+')'" value="+">
+                                    <input type="number" th:id="'count'+${sc.id}" name="count" style="width:50px;" th:value="${sc.count}">
+                                    <input type="button" th:onclick="'minusCount('+${sc.id}+')'" value="-">
+                                </td>
+                                <td>
+                                    <th:block th:each="product : ${application.dataContainer.productList}" th:if="${product.id == sc.productNo}">
+                                        <span th:if="${product.isSale == 1}">
+                                            <strong name="totalPrice" th:id="'totalPrice'+${sc.id}" th:text="${#numbers.formatInteger((product.price - (product.price * (product.discount / 100.0))) * sc.count, 3)}"></strong>
+                                        </span>
+                                        <span name="totalPrice" th:id="'totalPrice'+${sc.id}" th:if="${product.isSale == 0}"><strong th:text="${#numbers.formatInteger(product.price, 3)}"></strong></span>
+                                    </th:block>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td id="buttons" colspan="3" style="text-align: left">
+                                <input type="button" onclick="goDeleteAllShoppingCart()" value="전체상품 삭제">
+                                <input type="button" onclick="goDeleteShoppingCart()" value="선택상품 삭제">
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"></td>
+                            <td colspan="2">
+                                <th:block th:each="sc : ${shoppingCartList}">
+                                    <th:block th:each="p : ${application.productList}">
+                                        <input type="hidden" name="fee" th:value="${p.shippingFee}" th:if="${sc.productNo == p.id}">
+                                    </th:block>
+                                </th:block>
+                                <h5 id="totalPrice"></h5>
+                                <h5 id="shippingFee"></h5>
+                                <h5 id="sumPrice"></h5>
+                            </td>
+                            <td colspan="2">
+                                <div class="buttons">
+                                    <input type="button" onclick="goAllPaymentView()" value="전체상품 구매">
+                                    <input type="button" onclick="goPaymentView()" value="선택상품 구매">
+                                </div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </header>
+            </section><!-- End Portfolio Details Section -->
+        </form>
+    </main><!-- End #main -->
+    <th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

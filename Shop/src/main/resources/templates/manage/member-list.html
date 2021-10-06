@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Test</title>
+    <style>
+        form input {
+            display: block;
+        }
+        #list input {
+            display: inline-block;
+        }
+        form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<input type="button" onclick="insertForm()" value="추가하기">
+<table>
+    <thead>
+    <tr>
+        <th>회원 번호</th>
+        <th>이메일</th>
+        <th>이름</th>
+        <th>전화번호</th>
+        <th>주소</th>
+        <th>포인트</th>
+        <th>가입일</th>
+        <th>수정/삭제</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="member : ${memberList}">
+        <td th:text="${member.id}"></td>
+        <td th:id="'email'+${member.id}" th:text="${member.email}"></td>
+        <td th:id="'password'+${member.id}" th:text="${member.password}"></td>
+        <td th:id="'name'+${member.id}" th:text="${member.name}"></td>
+        <td th:id="'phone'+${member.id}" th:text="${member.phone}"></td>
+        <td th:id="'address'+${member.id}" th:text="${member.address}"></td>
+        <td th:id="'point'+${member.id}" th:text="${member.point}"></td>
+        <td th:id="'regdate'+${member.id}" th:text="${member.regdate}"></td>
+        <td>
+            <input type="button" th:onclick="'updateData('+${member.id}+');'" value="수정"> /
+            <input type="button" th:onclick="'deleteData('+${member.id}+');'" value="삭제">
+        </td>
+    </tr>
+    </tbody>
+</table>
+<h2 id="title">추가하기</h2>
+<form id="updateForm" action="/manager/update" method="post">
+    <input type="hidden" name="menu" value="member">
+    <input type="hidden" name="id" value="">
+    <input type="text" name="email" placeholder="email">
+    <input type="password" name="password" placeholder="password">
+    <input type="text" name="name" placeholder="name">
+    <input type="text" name="phone" placeholder="phone">
+    <input type="text" name="address" placeholder="address">
+    <input type="text" name="point" placeholder="point">
+    <input type="text" name="regdate" placeholder="regdate">
+
+    <input type="submit" value="수정하기">
+</form>
+<form id="insertForm" action="/manager/create" method="post">
+    <input type="hidden" name="menu" value="member">
+    <input type="text" name="email" placeholder="email">
+    <input type="password" name="password" placeholder="password">
+    <input type="text" name="name" placeholder="name">
+    <input type="text" name="phone" placeholder="phone">
+    <input type="text" name="address" placeholder="address">
+    <input type="text" name="point" placeholder="point">
+    <input type="text" name="regdate" placeholder="regdate">
+    <input type="submit" value="추가하기">
+</form>
+<script>
+
+    function insertForm() {
+        document.getElementById('insertForm').style.display = 'block';
+        document.getElementById('updateForm').style.display = 'none';
+    }
+    function updateData(id) {
+        document.getElementsByName('id')[0].value = id;
+        document.getElementsByName('email')[0].value = document.getElementById('email'+id).innerText;
+        document.getElementsByName('password')[0].value = document.getElementById('password'+id).innerText;
+        document.getElementsByName('name')[0].value = document.getElementById('name'+id).innerText;
+        document.getElementsByName('phone')[0].value = document.getElementById('phone'+id).innerText;
+        document.getElementsByName('address')[0].value = document.getElementById('address'+id).innerText;
+        document.getElementsByName('point')[0].value = document.getElementById('point'+id).innerText;
+        document.getElementsByName('regdate')[0].value = document.getElementById('regdate'+id).innerText;
+
+        document.getElementById('insertForm').style.display = 'none';
+        document.getElementById('updateForm').style.display = 'block';
+    }
+
+    function deleteData(id) {
+        let yesno = confirm('삭제하시겠습니까?');
+        if (yesno) {
+            location.href='/manager/delete?menu=member&' + 'id='+id;
+        } else {
+
+        }
+    }
+</script>
+</body>
+</html>

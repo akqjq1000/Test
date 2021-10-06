@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>OnePage Login - Login View</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+</head>
+
+<body>
+  <th:block th:include="@{/main/index-header}"></th:block>
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs" style="margin-top: 125px;">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>Register</h2>
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li>Register</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <script>
+      function passwordCheckAlgorithm() {
+        let pw = document.getElementsByName('password')[0].value;
+        let eng = /[a-z]/;
+        let upEng = /[A-Z]/;
+        let digit = /[0-9]/;
+        let symbol = /[~!@#$%^&*()_+-=`;',./:"<>?|]/
+
+        if(pw.length>=8 && pw.length<=16){
+          if (!(eng.test(pw)) || !(upEng.test(pw)) || !(digit.test(pw)) || !(symbol.test(pw))) {
+            document.getElementById('pwCheckMessage').style.display = 'block';
+          } else {
+            document.getElementById('pwCheckMessage').style.display = 'none';
+          }
+        } else {
+          document.getElementById('pwCheckMessage').style.display = 'block';
+        }
+      }
+      function checkEmail() {
+        let chVal = document.getElementById('emailChecker').value;
+        if (chVal == 'UPDATE') {
+          document.getElementsByName('email')[0].disabled = false;
+          document.getElementById('emailChecker').value = 'CHECK';
+        } else {
+          let email = document.getElementsByName('email')[0].value;
+          let regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+
+          if (email == '' || !email.match(regExp)) {
+            alert('형식에 맞게 입력해주세요.\n(ex aaa@bbb.ccc)');
+            return;
+          }
+
+          let option = "width=500, height= 100, location=no";
+          var windowObj = window.open("/members/search-email-view?email="+email, '이메일 중복 검사', option);
+
+          windowObj.document.getElementsByName('email')[0].value = email;
+        }
+      }
+
+      function register(e) {
+        if (document.getElementById('emailChecker').value == 'UPDATE') {
+          if (document.getElementsByName('pwCheckValue')[0].value == 'check') {
+            document.registerForm.submit();
+          } else {
+            alert('비밀번호를 확인해주세요.');
+            e.preventDefault();
+          }
+        } else {
+          alert('이메일 중복검사를 해주세요.');
+          e.preventDefault();
+        }
+        e.preventDefault();
+      }
+
+      function passwordConfirm() {
+        let pw = document.getElementsByName('password')[0].value;
+        let pwConfirm = document.getElementsByName('confirmPassword')[0].value;
+
+        if (pw == pwConfirm) {
+          document.getElementsByName('pwCheckValue')[0].value = 'check';
+          document.getElementById('pwConfirmMessage').style.display = 'none';
+        } else {
+          document.getElementById('pwConfirmMessage').style.display = 'block';
+          document.getElementsByName('pwCheckValue')[0].value = 'no';
+        }
+      }
+    </script>
+
+    <!-- ======= Portfolio Details Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+      <div class="container" data-aos="fade-up">
+        <div class="row">
+          <div class="col-sm-4"></div>
+          <div class="col-sm-4">
+            <form name="registerForm" class="loginForm" action="/members/register" method="post">
+              <input type="hidden" name="pwCheckValue" value="none">
+              <input id="emailChecker" onclick="checkEmail();" style="width : 100px; height : 45px; display: inline-block; position: absolute; right: 15px; background: #417fb0; color: #fff;" type="button" value="CHECK">
+              <input type="email" name="email" placeholder="Email" style="width: 73%;" required>
+              <input type="password" name="password" placeholder="Password (8 ~ 16 word)" onchange="passwordCheckAlgorithm()" required>
+              <h6 id="pwCheckMessage" style="color: #f00; font-size: 10pt; display: none;">※ 영어 대,소문자, 숫자, 특수기호를 포함해야 합니다. </h6>
+              <input type="password" name="confirmPassword" placeholder="Confirm Password" onchange="passwordConfirm()" required>
+              <h6 id="pwConfirmMessage" style="color: #f00; font-size: 10pt; display: none;">※ 비밀번호가 일치하지 않습니다. </h6>
+              <input type="text" name="name" placeholder="Name" required>
+              <input type="text" name="phone" placeholder="Phone" required>
+              <input type="text" name="address" placeholder="Address" required>
+              <button style="display: block;" onclick="register(event);">Register</button>
+            </form>
+          </div>
+          <div class="col-sm-2"></div>
+        </div>
+      </div>
+    </section><!-- End Portfolio Details Section -->
+
+  </main><!-- End #main -->
+  <th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>OnePage Login - Find View</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+</head>
+
+<body>
+<th:block th:include="@{/main/index-header}"></th:block>
+<main id="main">
+
+  <!-- ======= Breadcrumbs ======= -->
+  <article class="breadcrumbs-top">
+    <h3>Heart List</h3><br>
+    <hr>
+  </article>
+  <style>
+    p {
+      display: inline-block;
+    }
+    img.left {
+      width: 100px;
+      float: left;
+    }
+    div.heart-item {
+      display: block;
+      width: 95%;
+      border: 2px solid #eee;
+    }
+    div.heart-item p {
+      padding-top: 8px;
+      padding-left: 15px;
+    }
+    div.right {
+      border-left: 2px solid #eee;
+      height: 100%;
+      float: right;
+    }
+    div.right input {
+      position: relative;
+      top: 50px;
+    }
+  </style>
+
+  <script>
+    function deleteHeart(productNo) {
+      location.href='/members/delete-heart?productNo='+productNo;
+    }
+  </script>
+
+  <!-- ======= Portfolio Details Section ======= -->
+  <section id="portfolio-details" class="portfolio-details">
+    <div class="container" data-aos="fade-up">
+      <div class="row">
+        <div th:each="product: ${dataContainer.productList}" class="heart-item">
+          <img th:src="'/upload/'+${product.productImage}" class="left">
+          <p>
+            <span>
+              <a th:href="'/products/product-detail?productNo='+${product.id}" th:text="${product.name}"></a>
+            </span><br>
+            <span th:if="${product.isSale == 1}">
+              <strong th:text="${product.discount} + '%'"></strong>
+              <del th:text="${product.price}"></del><br>
+              <strong th:text="${#numbers.formatInteger(product.price - (product.price * (product.discount / 100.0)), 3)} + '원'"></strong>
+            </span>
+            <span th:if="${product.isSale == 0}"><strong th:text="${product.price}"></strong></span><br>
+          </p>
+
+          <div class="right">
+            <input type="button" value="제거" th:onclick="'deleteHeart('+${product.id}+')'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!-- End Portfolio Details Section -->
+
+</main><!-- End #main -->
+<th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <input type="hidden" id="email" th:value="${#httpServletRequest.getParameter('email')}" >
+    <th:block th:if="${message == true}">
+        <form action="/members/search-email-view" name="checkForm">
+            <h5>이미 사용중인 이메일입니다.</h5>
+            <input type="email" name="email" placeholder="이메일을 입력해주세요.">
+            <input type="submit" value="Check">
+        </form>
+    </th:block>
+    <th:block th:if="${message == false}">
+        <input type="button" value="사용하기" onclick="sendToParent();">
+    </th:block>
+<script>
+    function sendToParent() {
+        opener.document.getElementsByName('email')[0].value = window.document.getElementById('email').value;
+        opener.document.getElementById('emailChecker').value = 'UPDATE';
+        opener.document.getElementsByName('email')[0].readOnly = true;
+        window.close();
+    }
+</script>
+</body>
+</html>

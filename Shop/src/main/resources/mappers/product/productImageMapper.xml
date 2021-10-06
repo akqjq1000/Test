@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.ProductImageMapper">
+    <select id="readList" resultType="com.idu.shop.domain.product.ProductImage">
+        <![CDATA[select * from product_image]]>
+    </select>
+    <select id="readByProductNoList" resultType="com.idu.shop.domain.product.ProductImage">
+        <![CDATA[select * from product_image where productNo=#{productNo}]]>
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.product.ProductImage">
+        SELECT * FROM product_image WHERE id=#{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO product_image VALUES(seq_product_image.nextval, #{origFilename}, #{filename}, #{filePath}, #{productNo})
+    </insert>
+    <update id="update">
+        update product_image set origFilename=#{origFilename}, filename=#{filename}, filePath=#{filePath}, productNo=#{productNo} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from product_image where id = #{productImageNo}
+    </delete>
+
+</mapper>

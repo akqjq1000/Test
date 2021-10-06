@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Portfolio Details - OnePage Bootstrap Template</title>
+  <th:block th:include="@{/main/index-include}"></th:block>
+  <style>
+    table {
+      width: 1140px;
+      margin: auto;
+    }
+
+    table tr th, table tr td {
+      text-align: center;
+    }
+
+    table tr th:nth-child(1) {width: 30%;}
+    table tr th:nth-child(2) {width: 20%;}
+    table tr th:nth-child(3) {width: 20%;}
+    table tr th:nth-child(4) {width: 20%;}
+    table tr th:nth-child(5) {width: 20%;}
+
+    table img {width: 120px; height: 160px;}
+
+    table tfoot tr td {
+      text-align: right;
+    }
+
+    table h1 {
+      display: inline-block;
+    }
+
+    #order-list {
+      list-style: none;
+      padding: 50px;
+    }
+    .order {
+      border: 2px solid #eee;
+      margin: 15px;
+      border-radius: 15px;
+      padding: 15px;
+    }
+
+    .order-list li {
+      border: 2px solid #eee;
+      border-radius: 15px;
+      padding: 35px;
+      margin-right: 35px;
+    }
+
+    .order-border {
+      border: 1px solid #eee;
+      border-radius: 15px;
+      padding: 15px 45px;
+      position: relative;
+    }
+
+    .order-side {
+      position: relative;
+      top: -60px;
+      left: 130px;
+      margin: -20px;
+    }
+
+    .order-title {
+      width: 100%;
+    }
+
+    .order-title a {
+      right: 0;
+    }
+
+    .order-aside {
+      position: relative;
+      top: -60px;
+      left: 200px;
+      margin: -20px;
+    }
+    .order-count {
+      display: inline-block;
+      width: 49.5%;
+      padding: 0;
+      margin: 0;
+    }
+    .order-count h4, .order-count h1 {
+      display: inline-block;
+      text-align: left;
+    }
+    #totalPrice {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <th:block th:include="@{/main/index-header}"></th:block>
+  <div class="container">
+    <main id="main">
+      <article class="breadcrumbs-top">
+        <h3>Order List</h3><br>
+        <div class="order-count">
+          <h4>주문건수</h4><br>
+          <h1 th:text="${paymentList.size()}"></h1> 건
+        </div>
+        <div class="order-count">
+          <h4>배송중</h4><br>
+          <h1>0</h1> 건
+        </div>
+        <hr>
+      </article>
+      <!-- ======= Portfolio Details Section ======= -->
+      <section id="portfolio-details" class="portfolio-details">
+        <header>
+          <ul id="order-list">
+            <li th:each="payment : ${paymentList}">
+              <form action="/orders/order-detail" method="post">
+                <input type="hidden" name="orderSequence" th:value="${payment.orderSequence}">
+                <div class="order">
+                  <div class="order-title">
+                    <span th:text="${payment.paymentDate}"></span>
+                    <input type="submit" class="float-md-right" value="주문 상세 내역">
+                  </div>
+                  <div class="order-border">
+                    <th:block th:each="orders : ${orderList}">
+                      <th:block th:each="order : ${orders}" th:if="${order.orderSequence == payment.orderSequence}">
+                        <th:block th:each="product: ${application.dataContainer.productList}" th:if="${product.id == order.productNo}">
+                          <div>
+                            <img class="img-fluid" th:src="'/upload/'+${product.productImage}" width="75px">
+                          </div>
+                          <div class="order-side">
+                            <a href="" th:text="${product.name}"></a>
+                            <th:block th:each="orderOption : ${orderOptionList}" th:if="${orderOption.orderNo == order.id}">
+                              <span th:each="optionValue : ${optionValueList}" th:if="${orderOption.optionValueNo == optionValue.id}" th:text="${optionValue.name}"></span>
+                            </th:block>
+                            <span th:text="${order.count}"></span>
+                          </div>
+                        </th:block><br>
+                        <div class="order-aside" style="margin-top: 1px;">
+                          <input type="button" value="장바구니">
+                        </div>
+                      </th:block>
+                    </th:block>
+                  </div>
+                  <h6 id="totalPrice" th:text="'총 결제금액: ' + ${payment.totalPrice}"></h6>
+                </div>
+              </form>
+            </li>
+          </ul>
+        </header>
+      </section><!-- End Portfolio Details Section -->
+    </main><!-- End #main -->
+  </div>
+
+  <th:block th:include="@{/main/index-footer}"></th:block>
+</body>
+
+</html>

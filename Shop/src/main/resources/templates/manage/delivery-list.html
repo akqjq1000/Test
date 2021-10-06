@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Member Test</title>
+  <style>
+    .delivery-view {
+      border: 2px solid #eee;
+      border-radius: 15px;
+    }
+  </style>
+  <script>
+    function selectCourier(no) {
+      let option = "width=500, height= 400, location=no";
+      let windowObj = window.open('/manager/delivery-courier-list?thisNo='+no, '배송기사 선택', option);
+
+    }
+  </script>
+</head>
+<body>
+<form action="/manager/search" method="get">
+  <input type="hidden" name="menu" value="delivery">
+  <select name="option">
+    <option value="name">회원이름</option>
+    <option value="id">회원번호</option>
+    <option value="sequence">주문번호</option>
+    <option value="date">주문일</option>
+  </select>
+  <input type="text" name="keyword" placeholder="검색어를 입력하세요.">
+  <input type="submit" value="검색">
+</form>
+  <th:block th:each="delivery, i : ${dataContainer.deliveryList}">
+    <form action="/manager/update" method="post">
+      <input type="hidden" name="menu" value="delivery">
+      <div class="delivery-view">
+        <input type="hidden" name="deliveryNo" th:value="${delivery.id}">
+        <h4 th:text="'회원번호: ' + ${delivery.memberNo}"></h4>
+
+        <div class="courier-view" th:if="${delivery.courierNo == 0}">
+          <input type="hidden" name="courierNo">
+          <input type="button" value="배송기사 선택" th:onclick="'selectCourier('+${i.index}+')'"><br>
+          배송기사 이름: <span class="courier-name"></span><br>
+          배송기사 연락처: <span class="courier-phone"></span><br>
+          배송사: <span class="courier"></span><br>
+          송장번호 <input type="text" name="code" th:value="${delivery.code}" placeholder="Code"><br>
+        </div>
+        <div class="courier-view" th:each="courier: ${dataContainer.courierList}" th:if="${delivery.courierNo == courier.id}">
+          <input type="hidden" name="courierNo" th:value="${courier.id}">
+          <input type="button" value="배송기사 선택" th:onclick="'selectCourier('+${i.index}+')'"><br>
+          배송기사 이름: <span class="courier-name" th:text="${courier.name}"></span><br>
+          배송기사 연락처: <span class="courier-phone" th:text="${courier.phone}"></span><br>
+          배송사: <span class="courier" th:text="${courier.courier}"></span><br>
+          송장번호 <input type="text" name="code" th:value="${delivery.code}" placeholder="Code"><br>
+        </div>
+        <br>
+        <div>
+          주문접수<input type="radio" name="status" value="0" th:checked="${delivery.status == 0}">
+          배송출발<input type="radio" name="status" value="1" th:checked="${delivery.status == 1}">
+          배송중<input type="radio" name="status" value="2" th:checked="${delivery.status == 2}">
+          배송완료<input type="radio" name="status" value="3" th:checked="${delivery.status == 3}">
+          완료<input type="radio" name="status" value="4" th:checked="${delivery.status == 4}">
+        </div>
+        <input type="submit" value="수정하기">
+      </div>
+    </form>
+  </th:block>
+</body>
+</html>

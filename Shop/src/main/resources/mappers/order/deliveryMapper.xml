@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.idu.shop.DeliveryMapper">
+    <select id="readList" resultType="com.idu.shop.domain.order.Delivery">
+        <![CDATA[select * from delivery]]>
+    </select>
+    <select id="readById" resultType="com.idu.shop.domain.order.Delivery">
+        SELECT * FROM delivery WHERE id=#{id}
+    </select>
+    <select id="read" resultType="com.idu.shop.domain.order.Delivery">
+        SELECT * FROM delivery WHERE orderSequence=#{orderSequence}
+    </select>
+    <insert id="insert">
+        INSERT INTO delivery VALUES(seq_delivery.nextval, #{memberNo}, #{memberShippingAddressNo}, #{courierNo}, #{code}, #{orderSequence}, #{status})
+    </insert>
+    <update id="update">
+        update delivery set memberNo=#{memberNo}, memberShippingAddressNo=#{memberShippingAddressNo}, courierNo=#{courierNo}, code=#{code}, status=#{status} where id=#{id}
+    </update>
+    <delete id="delete">
+        delete from delivery where id = #{id}
+    </delete>
+
+</mapper>
